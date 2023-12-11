@@ -1,6 +1,6 @@
 from node_editor_graphics_scene import Node_Editor_Graphics_Scene
 
-class scene:
+class scene():
     def __init__(self) -> None:
         self.nodes = []
         self.edges = []

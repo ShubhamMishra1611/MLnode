@@ -1,16 +1,19 @@
 import typing
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtCore import QRect, Qt, QFile
 from PyQt5.QtGui import QBrush, QColor, QPen, QFont, QPainter, QResizeEvent
 
 from node_scene import scene
 from node_editor_graphics_view import Node_Editor_Graphics_View
 from node_node import Node
-from style_node import NODE_EDITOR_STYLESHEET
+from styles.style_node import NODE_EDITOR_STYLESHEET
 
 class node_editor_wind(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self.stylesheet_filename = 'styles/nodestyle.qss'
+        self.loadStylesheet(self.stylesheet_filename)
+
 
         self.initUI()
 
@@ -34,6 +37,14 @@ class node_editor_wind(QWidget):
         self.setWindowTitle("Node Editor") # setting window title
         self.show()
         # self.addDebugContent()
+
+    def loadStylesheet(self, filename):
+        print('STYLE loading:', filename)
+        file = QFile(filename)
+        file.open(QFile.ReadOnly | QFile.Text)
+        stylesheet = file.readAll()
+        QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))
+
 
     def addDebugContent(self):
         greenBrush = QBrush(Qt.green)

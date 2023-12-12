@@ -1,5 +1,5 @@
 import typing
-from PyQt5.QtWidgets import QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsItem, QGraphicsProxyWidget
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QPen, QColor, QBrush, QPainterPath
 from PyQt5.QtWidgets import QGraphicsTextItem
@@ -9,6 +9,7 @@ class QgraphicsNode(QGraphicsItem):
         super().__init__(parent)
 
         self.node = node
+        self.content = self.node.content
 
         self._title_color = Qt.white
         self._title_font = QFont("Ubuntu", 10)
@@ -32,7 +33,13 @@ class QgraphicsNode(QGraphicsItem):
 
         self.initUI()
 
-
+    @property
+    def title(self): return self._title
+    @title.setter
+    def title(self, value):
+        self._title = value
+        self.title_item.setPlainText(self._title)
+        
     def boundingRect(self):
         return QRectF(
             0,
@@ -56,12 +63,14 @@ class QgraphicsNode(QGraphicsItem):
             - 2 * self._padding
         )
 
-    @property
-    def title(self): return self._title
-    @title.setter
-    def title(self, value):
-        self._title = value
-        self.title_item.setPlainText(self._title)
+    def initcontent(self):
+        self.grContent = QGraphicsProxyWidget(self)
+        self.content.setGeometry(self.edge_size, self.title_height + self.edge_size,
+                                 self.width - 2*self.edge_size, self.height - 2*self.edge_size-self.title_height)
+        self.grContent.setWidget(self.content)
+
+
+
 
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):

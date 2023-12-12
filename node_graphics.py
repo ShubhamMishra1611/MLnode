@@ -31,6 +31,7 @@ class QgraphicsNode(QGraphicsItem):
         self.title = self.node.title
 
 
+        self.initcontent()
         self.initUI()
 
     @property
@@ -63,11 +64,20 @@ class QgraphicsNode(QGraphicsItem):
             - 2 * self._padding
         )
 
+    def to_int(*args):
+        arguments = list(args)
+        for x in args:
+            arguments.append(int(x) if type(x) is int else x)
+        return arguments
     def initcontent(self):
         self.grContent = QGraphicsProxyWidget(self)
-        self.content.setGeometry(self.edge_size, self.title_height + self.edge_size,
-                                 self.width - 2*self.edge_size, self.height - 2*self.edge_size-self.title_height)
+        self.content.setGeometry(int(self.edge_size), int(self.title_height + self.edge_size),
+                                 int(self.width - 2*self.edge_size), int(self.height - 2*self.edge_size-self.title_height))
+        # self.content.setGeometry(*self.to_int(self.edge_size, self.title_height + self.edge_size,
+        #                           self.width - 2*self.edge_size, self.height - 2*self.edge_size-self.title_height))
         self.grContent.setWidget(self.content)
+
+
 
 
 

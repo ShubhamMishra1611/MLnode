@@ -16,4 +16,4 @@ class QNode_content_widget(QWidget):
 
         self.wdg_label = QLabel("Random things ")
         self.layout.addWidget(self.wdg_label)
-        self.layout.addWidget(QTextEdit("Scibdi duph "))
+        self.layout.addWidget(QTextEdit("Scibdi duph"))

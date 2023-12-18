@@ -27,10 +27,14 @@ class QgraphicsNode(QGraphicsItem):
         self._brush_title = QBrush(QColor("#FF313131"))
         self._brush_background = QBrush(QColor("#E3212121"))
 
+        # init the title
         self.initTitle()
         self.title = self.node.title
 
+        # init the socket
+        self.init_sockets()
 
+        # init content
         self.initcontent()
         self.initUI()
 
@@ -45,8 +49,8 @@ class QgraphicsNode(QGraphicsItem):
         return QRectF(
             0,
             0,
-            2 * self.edge_size + self.width,
-            2 * self.edge_size + self.height
+            self.width,
+            self.height
         ).normalized()
 
     def initUI(self):
@@ -77,10 +81,8 @@ class QgraphicsNode(QGraphicsItem):
         #                           self.width - 2*self.edge_size, self.height - 2*self.edge_size-self.title_height))
         self.grContent.setWidget(self.content)
 
-
-
-
-
+    def init_sockets(self):
+        pass
 
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):

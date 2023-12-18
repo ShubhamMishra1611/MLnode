@@ -6,6 +6,7 @@ from PyQt5.QtGui import QBrush, QColor, QPen, QFont, QPainter, QResizeEvent
 from node_scene import scene
 from node_editor_graphics_view import Node_Editor_Graphics_View
 from node_node import Node
+from node_socket import Socket
 from styles.style_node import NODE_EDITOR_STYLESHEET
 
 class node_editor_wind(QWidget):
@@ -28,7 +29,7 @@ class node_editor_wind(QWidget):
 
 
         self.scene = scene()
-        node = Node(self.scene, "A Node")
+        node = Node(self.scene, "A Node", inputs = [1,1,1], outputs = [1])
 
         self.view = Node_Editor_Graphics_View(self.scene.grscene, self)
         self.layout.addWidget(self.view)

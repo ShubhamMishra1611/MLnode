@@ -1,5 +1,5 @@
 import typing
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsProxyWidget
+from PyQt5.QtWidgets import QGraphicsItem, QGraphicsProxyWidget, QGraphicsSceneMouseEvent
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QPen, QColor, QBrush, QPainterPath
 from PyQt5.QtWidgets import QGraphicsTextItem
@@ -37,6 +37,11 @@ class QgraphicsNode(QGraphicsItem):
         # init content
         self.initcontent()
         self.initUI()
+
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        super().mouseMoveEvent(event)
+        self.node.update_connected_edges()
 
     @property
     def title(self): return self._title

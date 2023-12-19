@@ -8,6 +8,7 @@ from node_editor_graphics_view import Node_Editor_Graphics_View
 from node_node import Node
 from node_socket import Socket
 from styles.style_node import NODE_EDITOR_STYLESHEET
+from node_edge import Edge,EDGE_BEZIER, EGDE_DIRECT
 
 class node_editor_wind(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -29,15 +30,27 @@ class node_editor_wind(QWidget):
 
 
         self.scene = scene()
-        node = Node(self.scene, "A Node", inputs = [1,1,1], outputs = [1])
-
         self.view = Node_Editor_Graphics_View(self.scene.grscene, self)
         self.layout.addWidget(self.view)
 
 
+        self.add_node()
         self.setWindowTitle("Node Editor") # setting window title
         self.show()
         # self.addDebugContent()
+
+    def add_node(self):
+        node_1 = Node(self.scene, "A Node 1", inputs = [1,2,3], outputs = [1])
+        node_2 = Node(self.scene, "A Node 2", inputs = [1,2,2], outputs = [1])
+        node_3 = Node(self.scene, "A Node 3", inputs = [1,2,3], outputs = [1])
+
+        node_1.setPos(-250, -250)
+        node_2.setPos(-150, 20)
+        node_3.setPos(100, -80)
+
+        edge1 = Edge(self.scene, node_1.outputs[0], node_2.inputs[2], type_edge=EDGE_BEZIER)
+        edge2 = Edge(self.scene, node_2.outputs[0], node_3.inputs[0], type_edge=EDGE_BEZIER)
+
 
     def loadStylesheet(self, filename):
         print('STYLE loading:', filename)

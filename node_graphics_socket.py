@@ -5,12 +5,20 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 class Qgraphics_socket(QGraphicsItem):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, socket_type = 1):
         super().__init__(parent)
 
         self.radius = 6
         self._outline_width = 1.0
-        self._color_background = QColor("#74A662")
+        self._colors = [
+            QColor("#74A662"),
+            QColor("#FFFF7700"),
+            QColor("#FF52E220"),
+            QColor("#FFA86DB1"),
+            QColor("#74A662"),
+            QColor("#74A662")
+        ]
+        self._color_background = self._colors[socket_type]
         self._color_outline = QColor("#FF000000")
 
         self._pen = QPen(self._color_outline)

@@ -29,6 +29,9 @@ class Node():
             counter+=1
             self.outputs.append(socket)
 
+    def __str__(self) -> str:
+        return "<Node %s>" % (hex(id(self)))
+
     @property
     def pos(self):
         return self.graphical_node.pos()

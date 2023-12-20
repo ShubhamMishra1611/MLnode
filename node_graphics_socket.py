@@ -3,10 +3,12 @@ from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
 
 class Qgraphics_socket(QGraphicsItem):
-    def __init__(self, parent = None, socket_type = 1):
-        super().__init__(parent)
+    def __init__(self, socket, socket_type = 1):
+        self.socket = socket
+        super().__init__(socket.node.graphical_node)
 
         self.radius = 6
         self._outline_width = 1.0
@@ -43,4 +45,3 @@ class Qgraphics_socket(QGraphicsItem):
             2*(self.radius + self._outline_width)
         )
     
-

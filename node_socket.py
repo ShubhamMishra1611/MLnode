@@ -13,7 +13,7 @@ class Socket():
         self.position = position
         self.socket_type = socket_type
         
-        self.graphics_socket = Qgraphics_socket(self.node.graphical_node, self.socket_type)
+        self.graphics_socket = Qgraphics_socket(self, self.socket_type)
         self.graphics_socket.setPos(*self.node.get_socket_position(index, position))
 
         self.edge = None
@@ -27,5 +27,9 @@ class Socket():
 
     def has_edge(self):
         return self.edge is not None
+    
+    def __str__(self) -> str:
+        return "<Socket %s>" % (hex(id(self)))
+
 
 

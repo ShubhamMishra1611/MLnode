@@ -2,16 +2,16 @@ import typing
 from node_graphics import QgraphicsNode
 from node_content_widget import QNode_content_widget
 from node_socket import Socket, LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+DEBUG = True
 class Node():
     def __init__(self, scene, title="Undefined Node", inputs = [], outputs = []) -> None:
         self.scene = scene
         self.title = title
-        self.content = QNode_content_widget()
+        self.content = QNode_content_widget(self)
         self.graphical_node = QgraphicsNode(self)
 
         self.scene.add_node(self)
         self.scene.grscene.addItem(self.graphical_node)
-
         self.socket_spacing = 20
 
 
@@ -51,3 +51,18 @@ class Node():
         for socket in self.inputs + self.outputs:
             if socket.has_edge():
                 socket.edge.update_positions()
+
+    def remove(self):
+        if DEBUG: print('> Removing node ', self)
+        if DEBUG: print('removing all edges from the socket')
+        for socket in (self.inputs + self.outputs):
+            if socket.has_edge():
+                if DEBUG: print(' ---- removing socket:', socket, 'edge ', socket.edge)
+                socket.edge.remove()
+        if DEBUG: print('removing grNode')
+        self.scene.grscene.removeItem(self.graphical_node)
+        self.graphical_node = None
+        if DEBUG: print('remove node from the scene')
+        self.scene.remove_node(self)
+            
+        if DEBUG: print('- everything was done')

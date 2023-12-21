@@ -1,6 +1,6 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QGraphicsView
-from PyQt5.QtGui import QPainter, QWheelEvent, QMouseEvent
+from PyQt5.QtGui import QKeyEvent, QPainter, QWheelEvent, QMouseEvent
 from PyQt5.QtCore import Qt, QEvent
 from node_graphics_socket import Qgraphics_socket
 from node_graphics_edge import Qgraphics_edge
@@ -19,6 +19,7 @@ class Node_Editor_Graphics_View(QGraphicsView):
         self.setScene(self.scene)
 
         self.mode = MODE_NOOP
+        self.editing_flag = False
 
         self.zoom_in_factor = 1.25
         self.zoom = 10
@@ -33,6 +34,7 @@ class Node_Editor_Graphics_View(QGraphicsView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setDragMode(QGraphicsView.RubberBandDrag)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         zoom_out_factor = 1/self.zoom_in_factor
@@ -116,6 +118,7 @@ class Node_Editor_Graphics_View(QGraphicsView):
     def LeftMouseButtonPress(self, event:QMouseEvent):
         item = self.get_item_at_click(event)
         self.last_lmb_click_scene_pos = self.mapToScene(event.pos())
+        if DEBUG: print(f'LMB click on {item}, {self.debug_modifiers(event)}')
         if type(item) is Qgraphics_socket:
             if self.mode == MODE_NOOP:
                 self.mode = MODE_EDGE_DRAG
@@ -143,6 +146,22 @@ class Node_Editor_Graphics_View(QGraphicsView):
             self.drag_edge.graphical_edge.set_destination(pos.x(), pos.y())
             self.drag_edge.graphical_edge.update()
         super().mouseMoveEvent(event)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_Delete:
+            if not self.editing_flag:
+                self.delete_selected()
+            else:
+                super().keyPressEvent(event)
+        else:
+            super().keyPressEvent(event)
+
+    def delete_selected(self):
+        for item in self.scene.selectedItems():
+            if isinstance(item, Qgraphics_edge):
+                item.edge.remove()
+            elif hasattr(item, 'node'):
+                item.node.remove()
     
     def dist_between_click_and_release_is_off(self, event):
         new_lmb_release_scene_pos = self.mapToScene(event.pos())
@@ -161,22 +180,23 @@ class Node_Editor_Graphics_View(QGraphicsView):
     def edge_drag_end(self, item):
         self.mode = MODE_NOOP
         if type(item) is Qgraphics_socket:
-            if item.socket.has_edge():
-                item.socket.edge.remove()
-            if DEBUG:print('View::edge_drag_end ~   assign end socket', item.socket)
-            if self.previous_edge is not None:
-                self.previous_edge.remove()
-                if DEBUG:print('View::edge_drag_end ~   previous edge removed', item.socket)
-            self.drag_edge.start_socket = self.last_start_socket
-            self.drag_edge.end_socket = item.socket
-            self.drag_edge.start_socket.set_connected_edge(self.drag_edge)
-            self.drag_edge.end_socket.set_connected_edge(self.drag_edge)
-            if DEBUG: print('View::edge_drag_end ~ assigned start and end socket to drag edge')
-            self.drag_edge.update_positions()
-            if self.drag_edge.end_socket == self.drag_edge.start_socket:
-                if DEBUG: print('View::edge_drag_end ~ edge assigned to same socket... removed')
-                self.drag_edge.remove()
-            return True
+            if item.socket != self.last_start_socket:
+                if item.socket.has_edge():
+                    item.socket.edge.remove()
+                if DEBUG:print('View::edge_drag_end ~   assign end socket', item.socket)
+                if self.previous_edge is not None:
+                    self.previous_edge.remove()
+                    if DEBUG:print('View::edge_drag_end ~   previous edge removed', item.socket)
+                self.drag_edge.start_socket = self.last_start_socket
+                self.drag_edge.end_socket = item.socket
+                self.drag_edge.start_socket.set_connected_edge(self.drag_edge)
+                self.drag_edge.end_socket.set_connected_edge(self.drag_edge)
+                if DEBUG: print('View::edge_drag_end ~ assigned start and end socket to drag edge')
+                self.drag_edge.update_positions()
+                # if self.drag_edge.end_socket == self.drag_edge.start_socket:
+                #     if DEBUG: print('View::edge_drag_end ~ edge assigned to same socket... removed')
+                #     self.drag_edge.remove()
+                return True
         if DEBUG:print('View::edge_drag_end ~ End of dragging edge')
         self.drag_edge.remove()
         self.drag_edge = None
@@ -191,6 +211,13 @@ class Node_Editor_Graphics_View(QGraphicsView):
         pos = event.pos()
         item = self.itemAt(pos)
         return item
+    
+    def debug_modifiers(self, event):
+        out = 'MODS:'
+        if event.modifiers() & Qt.ShiftModifier: out += 'SHIFT'
+        if event.modifiers() & Qt.AltModifier: out += 'ALT'
+        if event.modifiers() & Qt.ControlModifier: out += 'CTRL'
+        return out
 
 
         

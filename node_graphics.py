@@ -41,7 +41,10 @@ class QgraphicsNode(QGraphicsItem):
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         super().mouseMoveEvent(event)
-        self.node.update_connected_edges()
+
+        for node in self.scene().scene.nodes:
+            if node.graphical_node.isSelected():
+                node.update_connected_edges()
 
     @property
     def title(self): return self._title

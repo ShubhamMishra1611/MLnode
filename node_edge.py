@@ -51,4 +51,7 @@ class Edge:
         self.remove_from_socket()
         self.scene.grscene.removeItem(self.graphical_edge)
         self.graphical_edge = None
-        self.scene.remove_edge(self)
+        try:
+            self.scene.remove_edge(self)
+        except ValueError:
+            pass

@@ -1,13 +1,15 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QGraphicsView
+from PyQt5.QtWidgets import QGraphicsView, QApplication
 from PyQt5.QtGui import QKeyEvent, QPainter, QWheelEvent, QMouseEvent
 from PyQt5.QtCore import Qt, QEvent
 from node_graphics_socket import Qgraphics_socket
 from node_graphics_edge import Qgraphics_edge
 from node_edge import Edge, EDGE_BEZIER, EGDE_DIRECT
+from node_graphics_cutline import Q_Cutline
 
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
+MODE_EDGE_CUT = 3
 EDGE_DRAG_START_THRESHOLD = 10
 DEBUG = True
 
@@ -26,6 +28,11 @@ class Node_Editor_Graphics_View(QGraphicsView):
         self.zoom_step = 1
         self.zoom_clamp = False
         self.zoom_range = [6, 12]
+
+        # cut line
+        self.cutline = Q_Cutline()
+
+        self.scene.addItem(self.cutline)
 
     def initUI(self):
         self.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing | QPainter.TextAntialiasing | QPainter.SmoothPixmapTransform)
@@ -119,6 +126,7 @@ class Node_Editor_Graphics_View(QGraphicsView):
         item = self.get_item_at_click(event)
         self.last_lmb_click_scene_pos = self.mapToScene(event.pos())
         if DEBUG: print(f'LMB click on {item}, {self.debug_modifiers(event)}')
+        
         if type(item) is Qgraphics_socket:
             if self.mode == MODE_NOOP:
                 self.mode = MODE_EDGE_DRAG
@@ -128,6 +136,16 @@ class Node_Editor_Graphics_View(QGraphicsView):
         if self.mode == MODE_EDGE_DRAG:
             res = self.edge_drag_end(item)
             if res: return
+
+        if item is None:
+            if event.modifiers() & Qt.ShiftModifier:
+                self.mode = MODE_EDGE_CUT
+                fake_event = QMouseEvent(QEvent.MouseButtonRelease, event.localPos(), event.screenPos(),
+                                        Qt.LeftButton, Qt.NoButton, event.modifiers())
+                
+                super().mouseReleaseEvent(fake_event)
+                QApplication.setOverrideCursor(Qt.CrossCursor)
+                return 
         super().mousePressEvent(event)
 
     def LeftMouseButtonRelease(self, event:QMouseEvent):
@@ -137,6 +155,14 @@ class Node_Editor_Graphics_View(QGraphicsView):
             if  self.dist_between_click_and_release_is_off(event):
                 res = self.edge_drag_end(item)
                 if res: return
+
+        if self.mode == MODE_EDGE_CUT:
+            self.cut_intersecting_edges()
+            self.cutline.line_points = []
+            self.cutline.update()
+            QApplication.setOverrideCursor(Qt.ArrowCursor)
+            self.mode = MODE_NOOP
+            return
         super().mouseReleaseEvent(event)
 
 
@@ -145,6 +171,11 @@ class Node_Editor_Graphics_View(QGraphicsView):
             pos = self.mapToScene(event.pos())
             self.drag_edge.graphical_edge.set_destination(pos.x(), pos.y())
             self.drag_edge.graphical_edge.update()
+
+        if self.mode == MODE_EDGE_CUT:
+            pos = self.mapToScene(event.pos())
+            self.cutline.line_points.append(pos)
+            self.cutline.update()
         super().mouseMoveEvent(event)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -211,6 +242,15 @@ class Node_Editor_Graphics_View(QGraphicsView):
         pos = event.pos()
         item = self.itemAt(pos)
         return item
+    
+    def cut_intersecting_edges(self):
+        for i in range(len(self.cutline.line_points)-1):
+            p_1 = self.cutline.line_points[i] 
+            p_2 = self.cutline.line_points[i+1]
+
+            for edge in self.scene.scene.edges:
+                if edge.graphical_edge.intersectWith(p_1, p_2):
+                    edge.remove() 
     
     def debug_modifiers(self, event):
         out = 'MODS:'

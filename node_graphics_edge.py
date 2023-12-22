@@ -33,7 +33,7 @@ class Qgraphics_edge(QGraphicsPathItem):
         self.position_destination = [x, y]
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget = None) -> None:
-        self.update_path()
+        self.setPath(self.update_path())
 
         if self.edge.end_socket is None:
             painter.setPen(self._pen_dragging if not self.isSelected() else self._pen_selected)
@@ -45,12 +45,17 @@ class Qgraphics_edge(QGraphicsPathItem):
     def update_path():
         raise NotImplemented("This method has to be overridden in the child class")
     
+    def intersectWith(self, p_1, p_2):
+        cutpath = QPainterPath(p_1)
+        cutpath.lineTo(p_2)
+        path = self.update_path()
+        return cutpath.intersects(path)
 
 class QGraphics_edge_direct(Qgraphics_edge):
     def update_path(self):
         path = QPainterPath(QPointF(self.position_source[0], self.position_source[1]))
         path.lineTo(self.position_destination[0], self.position_destination[1])
-        self.setPath(path)
+        return path
 
 class QGraphics_edge_bezier(Qgraphics_edge):
     def update_path(self):
@@ -78,5 +83,5 @@ class QGraphics_edge_bezier(Qgraphics_edge):
         path.cubicTo(
             s[0] + cpx_s, s[1] + cpy_s, d[0] + cpx_d, d[1] + cpy_d, self.position_destination[0], self.position_destination[1]
         )
-        self.setPath(path)
+        return path
 

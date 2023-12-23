@@ -1,10 +1,13 @@
 import typing
+from collections import OrderedDict
+from node_serializable import Serializable
+
 from PyQt5 import QtCore
 from PyQt5.QtGui import QFocusEvent, QKeyEvent
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QWidget
 
-class QNode_content_widget(QWidget):
+class QNode_content_widget(QWidget, Serializable):
     def __init__(self, node,  parent=None) -> None:
         super().__init__(parent)
         self.node = node
@@ -22,6 +25,15 @@ class QNode_content_widget(QWidget):
     def setEditingFlag(self, value):
         print("yo")
         self.node.scene.grscene.views()[0].editing_flag = value
+
+    def serialize(self):
+        return OrderedDict([
+
+        ])
+
+    def deserialize(self, data, hashmap={}):
+        return False
+
 
 class Q_TextEdit(QTextEdit):
 

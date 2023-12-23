@@ -1,15 +1,19 @@
 import typing
+from collections import OrderedDict
+from node_serializable import Serializable
 from node_graphics import QgraphicsNode
 from node_content_widget import QNode_content_widget
 from node_socket import Socket, LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
 DEBUG = True
-class Node():
+class Node(Serializable):
     def __init__(self, scene, title="Undefined Node", inputs = [], outputs = []) -> None:
+        super().__init__()
+        self._title = title
         self.scene = scene
-        self.title = title
         self.content = QNode_content_widget(self)
         self.graphical_node = QgraphicsNode(self)
 
+        self.title = title
         self.scene.add_node(self)
         self.scene.grscene.addItem(self.graphical_node)
         self.socket_spacing = 20
@@ -31,13 +35,21 @@ class Node():
 
     def __str__(self) -> str:
         return "<Node %s>" % (hex(id(self)))
+    
 
     @property
     def pos(self):
         return self.graphical_node.pos()
-    
     def setPos(self, x, y):
         self.graphical_node.setPos(x, y)
+    @property
+    def title(self): return self._title
+
+    @title.setter
+    def title(self, value):
+        self._title = value
+        self.graphical_node.title = self._title
+    
     
     def get_socket_position(self, index, position):
         x = 0 if position in [LEFT_TOP, LEFT_BOTTOM] else self.graphical_node.width
@@ -66,3 +78,43 @@ class Node():
         self.scene.remove_node(self)
             
         if DEBUG: print('- everything was done')
+
+    def serialize(self):
+        inputs, outputs = [], []
+        for socket in self.inputs: inputs.append(socket.serialize())
+        for socket in self.outputs: outputs.append(socket.serialize())
+        return OrderedDict([
+            ('id', self.id),
+            ('title', self.title),
+            ('pos_x', self.graphical_node.scenePos().x()),
+            ('pos_y', self.graphical_node.scenePos().y()),
+            ('inputs', inputs),
+            ('outputs', outputs),
+            ('content', self.content.serialize()),
+        ])
+
+    def deserialize(self, data, hashmap={}):
+        self.id = data['id']
+        hashmap[data['id']] = self
+        self.setPos(data['pos_x'], data['pos_y'])
+        self.title = data['title']
+
+        data['inputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
+        data['outputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
+
+        self.inputs = []
+        print(data['inputs'])
+        for socket_data in data['inputs']:
+            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
+                                socket_type=socket_data['socket_type'])
+            new_socket.deserialize(socket_data, hashmap)
+            self.inputs.append(new_socket)
+        self.outputs = []
+        for socket_data in data['outputs']:
+            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
+                                socket_type=socket_data['socket_type'])
+            new_socket.deserialize(socket_data, hashmap)
+            self.outputs.append(new_socket)
+        
+        return True
+

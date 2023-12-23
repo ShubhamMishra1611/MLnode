@@ -163,6 +163,10 @@ class Node_Editor_Graphics_View(QGraphicsView):
             QApplication.setOverrideCursor(Qt.ArrowCursor)
             self.mode = MODE_NOOP
             return
+        
+        if self.dragMode() == QGraphicsView.RubberBandDrag:
+            self.scene.scene.history.store_history("selection changed")
+
         super().mouseReleaseEvent(event)
 
 
@@ -188,6 +192,14 @@ class Node_Editor_Graphics_View(QGraphicsView):
             self.scene.scene.saveToFile("graph.json.txt")
         elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
             self.scene.scene.loadFromFile("graph.json.txt")
+        elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and not event.modifiers() & Qt.ShiftModifier:
+            self.scene.scene.history.undo()
+        elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and event.modifiers() & Qt.ShiftModifier:
+            self.scene.scene.history.redo()
+        elif event.key() == Qt.Key_H:
+            print(f' retrieving histroy stack with current length as {len(self.scene.scene.history.history_stack)} and history idx {self.scene.scene.history.history_current_idx}')
+            print(self.scene.scene.history.history_stack)
+            
         else:
             super().keyPressEvent(event)
 
@@ -197,6 +209,8 @@ class Node_Editor_Graphics_View(QGraphicsView):
                 item.edge.remove()
             elif hasattr(item, 'node'):
                 item.node.remove()
+
+        self.scene.scene.history.store_history("Delete selected")
     
     def dist_between_click_and_release_is_off(self, event):
         new_lmb_release_scene_pos = self.mapToScene(event.pos())
@@ -228,9 +242,7 @@ class Node_Editor_Graphics_View(QGraphicsView):
                 self.drag_edge.end_socket.set_connected_edge(self.drag_edge)
                 if DEBUG: print('View::edge_drag_end ~ assigned start and end socket to drag edge')
                 self.drag_edge.update_positions()
-                # if self.drag_edge.end_socket == self.drag_edge.start_socket:
-                #     if DEBUG: print('View::edge_drag_end ~ edge assigned to same socket... removed')
-                #     self.drag_edge.remove()
+                self.scene.scene.history.store_history("created new edge by dragging")
                 return True
         if DEBUG:print('View::edge_drag_end ~ End of dragging edge')
         self.drag_edge.remove()
@@ -255,6 +267,8 @@ class Node_Editor_Graphics_View(QGraphicsView):
             for edge in self.scene.scene.edges:
                 if edge.graphical_edge.intersectWith(p_1, p_2):
                     edge.remove() 
+
+        self.scene.scene.history.store_history("Delete cut edges")
     
     def debug_modifiers(self, event):
         out = 'MODS:'

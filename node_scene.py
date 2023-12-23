@@ -4,6 +4,8 @@ from node_serializable import Serializable
 from node_editor_graphics_scene import Node_Editor_Graphics_Scene
 from node_node import Node
 from node_edge import Edge
+from node_scene_history import scene_history
+
 
 class scene(Serializable):
     def __init__(self) -> None:
@@ -14,6 +16,7 @@ class scene(Serializable):
         self.width, self.height = 16000, 16000
 
         self.initUI()
+        self.history = scene_history(self)
 
     def initUI(self):
         self.grscene = Node_Editor_Graphics_Scene(self)

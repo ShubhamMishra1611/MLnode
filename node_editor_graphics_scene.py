@@ -31,6 +31,7 @@ class Node_Editor_Graphics_Scene(QGraphicsScene):
             height
         )
 
+
     def drawBackground(self, painter: QPainter, rect: QRectF) -> None:
         super().drawBackground(painter, rect)
         left = int(math.floor(rect.left()))

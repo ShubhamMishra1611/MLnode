@@ -24,6 +24,7 @@ class Node_Editor_Graphics_View(QGraphicsView):
 
         self.mode = MODE_NOOP
         self.editing_flag = False
+        self.rubber_band_dragging_rectangle = False
 
         self.zoom_in_factor = 1.25
         self.zoom = 10
@@ -148,6 +149,8 @@ class Node_Editor_Graphics_View(QGraphicsView):
                 super().mouseReleaseEvent(fake_event)
                 QApplication.setOverrideCursor(Qt.CrossCursor)
                 return 
+            else:
+                self.rubber_band_dragging_rectangle = True
         super().mousePressEvent(event)
 
     def LeftMouseButtonRelease(self, event:QMouseEvent):
@@ -166,8 +169,10 @@ class Node_Editor_Graphics_View(QGraphicsView):
             self.mode = MODE_NOOP
             return
         
-        if self.dragMode() == QGraphicsView.RubberBandDrag:
+        # if self.dragMode() == QGraphicsView.RubberBandDrag:
+        if self.rubber_band_dragging_rectangle:
             self.scene.scene.history.store_history("selection changed")
+            self.rubber_band_dragging_rectangle = False
 
         super().mouseReleaseEvent(event)
 

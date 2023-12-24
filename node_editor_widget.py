@@ -40,13 +40,16 @@ class node_editor_widget(QWidget):
         node_1 = Node(self.scene, "A Node 1", inputs = [1,2,3], outputs = [1])
         node_2 = Node(self.scene, "A Node 2", inputs = [1,2,2], outputs = [1])
         node_3 = Node(self.scene, "A Node 3", inputs = [1,2,3], outputs = [1])
-
+        node_4 = Node(self.scene, "A Node 4", inputs = [1,2,3], outputs = [1])
+        
         node_1.setPos(-250, -250)
         node_2.setPos(-150, 20)
         node_3.setPos(100, -80)
+        node_4.setPos(500, -80)
 
         edge1 = Edge(self.scene, node_1.outputs[0], node_2.inputs[2], type_edge=EDGE_BEZIER)
         edge2 = Edge(self.scene, node_2.outputs[0], node_3.inputs[0], type_edge=EDGE_BEZIER)
+        edge3 = Edge(self.scene, node_3.outputs[0], node_4.inputs[0], type_edge=EDGE_BEZIER)
 
 
     def loadStylesheet(self, filename):

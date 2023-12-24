@@ -1,7 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QGraphicsView, QApplication
 from PyQt5.QtGui import QKeyEvent, QPainter, QWheelEvent, QMouseEvent
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt, QEvent, pyqtSignal
 from node_graphics_socket import Qgraphics_socket
 from node_graphics_edge import Qgraphics_edge
 from node_edge import Edge, EDGE_BEZIER, EGDE_DIRECT
@@ -14,6 +14,8 @@ EDGE_DRAG_START_THRESHOLD = 10
 DEBUG = True
 
 class Node_Editor_Graphics_View(QGraphicsView):
+    scene_pos_changed = pyqtSignal(int, int)
+
     def __init__(self, scene, parent=None):
         super().__init__(parent)
         self.scene = scene
@@ -180,28 +182,15 @@ class Node_Editor_Graphics_View(QGraphicsView):
             pos = self.mapToScene(event.pos())
             self.cutline.line_points.append(pos)
             self.cutline.update()
+        self.last_scene_mouse_position = self.mapToScene(event.pos())
+        self.scene_pos_changed.emit(
+            int(self.last_scene_mouse_position.x()), int(self.last_scene_mouse_position.y()) 
+        )
+        
         super().mouseMoveEvent(event)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Delete:
-            if not self.editing_flag:
-                self.delete_selected()
-            else:
-                super().keyPressEvent(event)
-        elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
-            self.scene.scene.saveToFile("graph.json.txt")
-        elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
-            self.scene.scene.loadFromFile("graph.json.txt")
-        elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and not event.modifiers() & Qt.ShiftModifier:
-            self.scene.scene.history.undo()
-        elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and event.modifiers() & Qt.ShiftModifier:
-            self.scene.scene.history.redo()
-        elif event.key() == Qt.Key_H:
-            print(f' retrieving histroy stack with current length as {len(self.scene.scene.history.history_stack)} and history idx {self.scene.scene.history.history_current_idx}')
-            print(self.scene.scene.history.history_stack)
-            
-        else:
-            super().keyPressEvent(event)
+        super().keyPressEvent(event)
 
     def delete_selected(self):
         for item in self.scene.selectedItems():

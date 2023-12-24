@@ -10,7 +10,7 @@ from node_socket import Socket
 from styles.style_node import NODE_EDITOR_STYLESHEET
 from node_edge import Edge,EDGE_BEZIER, EGDE_DIRECT
 
-class node_editor_wind(QWidget):
+class node_editor_widget(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.stylesheet_filename = 'styles/nodestyle.qss'
@@ -20,8 +20,7 @@ class node_editor_wind(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(200, 200, 800, 600) # setting the geometry
-
+        
         self.layout = QVBoxLayout() #TODO: should I go with VBox or HBox
         self.setContentsMargins(0,0,0,0)
         self.setLayout(self.layout)
@@ -35,9 +34,7 @@ class node_editor_wind(QWidget):
 
 
         self.add_node()
-        self.setWindowTitle("Node Editor") # setting window title
-        self.show()
-        # self.addDebugContent()
+        
 
     def add_node(self):
         node_1 = Node(self.scene, "A Node 1", inputs = [1,2,3], outputs = [1])

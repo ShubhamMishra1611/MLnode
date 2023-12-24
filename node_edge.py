@@ -10,6 +10,8 @@ class Edge(Serializable):
     def __init__(self, scene, start_socket=None, end_socket=None, type_edge = EGDE_DIRECT) -> None:
         super().__init__()
         self.scene = scene
+        self._start_socket = None
+        self._end_socket = None
         self.start_socket = start_socket
         self.end_socket = end_socket
         self.edge_type = type_edge
@@ -21,17 +23,27 @@ class Edge(Serializable):
 
     @start_socket.setter
     def start_socket(self, value):
+        # if we were assigned to some socket before, delete us from the socket
+        if self._start_socket is not None:
+            self._start_socket.remove_edge(self)
+
+        # assign new start socket
         self._start_socket = value
         if self.start_socket is not None:
-            self.start_socket.edge = self
+            self.start_socket.add_edge(self)
     @property
     def end_socket(self):return self._end_socket
 
     @end_socket.setter
     def end_socket(self, value):
+        # if we were assigned to some socket before, delete us from the socket
+        if self._end_socket is not None:
+            self._end_socket.remove_edge(self)
+
+        # assign new end socket
         self._end_socket = value
         if self.end_socket is not None:
-            self.end_socket.edge = self
+            self.end_socket.add_edge(self)
 
     @property
     def edge_type(self): return self._edge_type
@@ -73,13 +85,13 @@ class Edge(Serializable):
 
 
     def remove_from_socket(self):
-        if self.start_socket is not None:
-            self.start_socket.edge = None
-        if self.end_socket is not None:
-            self.end_socket.edge = None
+        # if self.start_socket is not None:
+        #     self.start_socket.edge = None
+        # if self.end_socket is not None:
+        #     self.end_socket.edge = None
 
-        self.start_socket = None
         self.end_socket = None
+        self.start_socket = None
 
     def remove(self):
         self.remove_from_socket()

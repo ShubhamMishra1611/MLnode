@@ -1,55 +1,66 @@
 import os
-
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from node_editor_widget import node_editor_widget
 
 class node_editor_window(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-
-        self.init_UI()
+        self.name_company = 'MLnode'
+        self.name_product = 'MLnode'
         self.file_name = None
-
-    def create_act(self, name, shortcut, tooltip, callback):
-        act = QAction(name, self)
-        act.setShortcut(shortcut)
-        act.setToolTip(tooltip)
-        act.triggered.connect(callback)
-        return act
+        self.init_UI()
 
     def init_UI(self):
-        menu_bar = self.menuBar()
-        file_menu = menu_bar.addMenu('&File')
-        file_menu.addAction(self.create_act('&New', 'Ctrl+N', 'Create a New Graph', self.on_file_new))
-        file_menu.addSeparator()
-        file_menu.addAction(self.create_act('&Open', 'Ctrl+O', 'Open file', self.on_file_open))
-        file_menu.addAction(self.create_act('&Save', 'Ctrl+S', 'Save file', self.on_file_save))
-        file_menu.addAction(self.create_act('Save &As..', 'Ctrl+Shift+S', 'Save file as...', self.on_file_save_as))
-        file_menu.addSeparator()
-        file_menu.addAction(self.create_act('E&xit', 'Ctrl+Q', 'Exit Application', self.close))
-
-        edit_menu = menu_bar.addMenu('&Edit')
-        edit_menu.addAction(self.create_act('&Undo', 'Ctrl+Z', 'Undo the last operation', self.on_undo))
-        edit_menu.addAction(self.create_act('&Redo', 'Ctrl+Shift+Z', 'Redo the last operation', self.on_redo))
-        edit_menu.addSeparator()
-        edit_menu.addAction(self.create_act('&Delete', 'Del', 'Delete the selected item', self.on_delete))
+        self.node_editor = node_editor_widget(self)
+        self.setCentralWidget(self.node_editor)
         
+        self.createActions()
+        self.createMenus()
 
-
-        node_editor = node_editor_widget(self)
-        self.setCentralWidget(node_editor)
-
-        self.statusBar().showMessage('')
-        self.status_mouse_pos = QLabel('')
-        self.statusBar().addPermanentWidget(self.status_mouse_pos)
-        node_editor.view.scene_pos_changed.connect(self.on_scene_pos_changed)
+        self.createStatusBar()
 
 
         self.setGeometry(200, 200, 800, 600) # setting the geometry
 
         self.setWindowTitle("Node Editor") # setting window title
         self.show()
+
+    def createStatusBar(self):
+        self.statusBar().showMessage('')
+        self.status_mouse_pos = QLabel('')
+        self.statusBar().addPermanentWidget(self.status_mouse_pos)
+        self.node_editor.view.scene_pos_changed.connect(self.on_scene_pos_changed)
+
+    
+    def createActions(self):
+        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.on_file_new)
+        self.actOpen = QAction('&Open', self, shortcut='Ctrl+O', statusTip="Open file", triggered=self.on_file_open)
+        self.actSave = QAction('&Save', self, shortcut='Ctrl+S', statusTip="Save file", triggered=self.on_file_save)
+        self.actSaveAs = QAction('Save &As...', self, shortcut='Ctrl+Shift+S', statusTip="Save file as...", triggered=self.on_file_save_as)
+        self.actExit = QAction('E&xit', self, shortcut='Ctrl+Q', statusTip="Exit application", triggered=self.close)
+
+        self.actUndo = QAction('&Undo', self, shortcut='Ctrl+Z', statusTip="Undo last operation", triggered=self.on_undo)
+        self.actRedo = QAction('&Redo', self, shortcut='Ctrl+Shift+Z', statusTip="Redo last operation", triggered=self.on_redo)
+        self.actDelete = QAction('&Delete', self, shortcut='Del', statusTip="Delete selected items", triggered=self.on_delete)
+
+    def createMenus(self):
+        menubar = self.menuBar()
+
+        self.fileMenu = menubar.addMenu('&File')
+        self.fileMenu.addAction(self.actNew)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(self.actOpen)
+        self.fileMenu.addAction(self.actSave)
+        self.fileMenu.addAction(self.actSaveAs)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(self.actExit)
+
+        self.editMenu = menubar.addMenu('&Edit')
+        self.editMenu.addAction(self.actUndo)
+        self.editMenu.addAction(self.actRedo)
+        self.editMenu.addSeparator()
+        self.editMenu.addAction(self.actDelete)
 
     def on_scene_pos_changed(self, x, y):
         self.status_mouse_pos.setText(f'[{x}, {y}]')
@@ -90,3 +101,15 @@ class node_editor_window(QMainWindow):
 
     def close(self) -> bool:
         return super().close()
+    
+    def readSettings(self):
+        settings = QSettings(self.name_company, self.name_product)
+        pos = settings.value('pos', QPoint(200, 200))
+        size = settings.value('size', QSize(400, 400))
+        self.move(pos)
+        self.resize(size)
+
+    def writeSettings(self):
+        settings = QSettings(self.name_company, self.name_product)
+        settings.setValue('pos', self.pos())
+        settings.setValue('size', self.size())

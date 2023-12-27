@@ -1,9 +1,10 @@
+import os
 import typing
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QRect, Qt, QFile
 from PyQt5.QtGui import QBrush, QColor, QPen, QFont, QPainter, QResizeEvent
 
-from node_scene import scene
+from node_scene import scene, InvalidFile
 from node_editor_graphics_view import Node_Editor_Graphics_View
 from node_node import Node
 from node_socket import Socket
@@ -15,9 +16,17 @@ class node_editor_widget(QWidget):
         super().__init__(parent)
         self.stylesheet_filename = 'styles/nodestyle.qss'
         self.loadStylesheet(self.stylesheet_filename)
+        self.file_name = None
 
 
         self.initUI()
+
+    def is_file_name_set(self):
+        return self.file_name is not None
+    
+    def get_user_friendly_file_name(self):
+        name = os.path.basename(self.file_name) if self.is_file_name_set() else "New untitled Graph"
+        return name
 
     def initUI(self):
         
@@ -58,6 +67,36 @@ class node_editor_widget(QWidget):
         file.open(QFile.ReadOnly | QFile.Text)
         stylesheet = file.readAll()
         QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))    
+
+    def fileNew(self):
+        self.scene.clear()
+        self.file_name = None
+
+    
+    def fileload(self, file_name):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            self.scene.loadFromFile(file_name)
+            self.file_name = file_name
+            return True
+        except InvalidFile as e:
+            print(e)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, f'Error in loading the file {file_name} --- {e}', 'Error '*20, QMessageBox.Ok)
+            return False
+        finally:
+            QApplication.restoreOverrideCursor()
+    
+    def fileSave(self, filename=None):
+        # when called with empty parameter, we won't store the filename
+        if filename is not None: self.file_name = filename
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        self.scene.saveToFile(self.file_name)
+        QApplication.restoreOverrideCursor()
+        return True
+
+            
+
 
 
     def addDebugContent(self):

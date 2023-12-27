@@ -8,7 +8,7 @@ class node_editor_window(QMainWindow):
         super().__init__()
         self.name_company = 'MLnode'
         self.name_product = 'MLnode'
-        self.file_name = None
+        self.filename = None
         self.init_UI()
 
     def init_UI(self):
@@ -66,7 +66,7 @@ class node_editor_window(QMainWindow):
         self.status_mouse_pos.setText(f'[{x}, {y}]')
     
     def on_file_new(self):
-        self.centralWidget().scene.clear()
+        self.get_current_node_editor_widget().fileNew()
 
     def on_file_open(self):
         file_name, filter = QFileDialog.getOpenFileName(self, 'Open graph from file')
@@ -74,31 +74,41 @@ class node_editor_window(QMainWindow):
         if file_name == '':
             return
         if os.path.isfile(file_name):
-            self.centralWidget().scene.loadFromFile(file_name)
+            self.get_current_node_editor_widget().scene.loadFromFile(file_name)
 
 
     def on_file_save(self):
-        if self.file_name is None: return self.on_file_save_as()
-        self.centralWidget().scene.saveToFile(self.file_name)
-        self.statusBar().showMessage(f'Successfully saved file name as {self.file_name}')
+        if self.get_current_node_editor_widget().file_name is None: return self.on_file_save_as()
+        self.get_current_node_editor_widget().fileSave()
+        self.statusBar().showMessage(f"Successfully saved {self.get_current_node_editor_widget().file_name}")
+        # self.setTitle()
+        return True
 
     def on_file_save_as(self):
+
         file_name, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
-        print("on file save as clicked")
-        self.file_name = file_name
-        self.on_file_save()
+        if file_name == '':
+            return False
+        self.get_current_node_editor_widget().fileSave(file_name)
+        self.statusBar().showMessage(f'Successfully saved as {self.get_current_node_editor_widget().file_name}')
+        # self.setTitle()
+        return True
+
 
     def on_undo(self):
-        self.centralWidget().scene.history.undo()
+        self.get_current_node_editor_widget().scene.history.undo()
 
     def on_redo(self):
-        self.centralWidget().scene.history.redo()
+        self.get_current_node_editor_widget().scene.history.redo()
 
 
     def on_delete(self):
-        self.centralWidget().scene.grscene.views()[0].delete_selected()
+        self.get_current_node_editor_widget().scene.grscene.views()[0].delete_selected()
         
 
+    def get_current_node_editor_widget(self):
+        return self.centralWidget()
+    
     def close(self) -> bool:
         return super().close()
     

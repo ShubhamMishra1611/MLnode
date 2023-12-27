@@ -1,8 +1,11 @@
+import os
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 from node_editor_window import node_editor_window
+from MLnode_sub_window import mlnode_sub_window
+
 class MLnodeWindow(node_editor_window):
 #     def __init__(self, parent: QWidget = None) -> None:
 #         super().__init__()
@@ -64,6 +67,74 @@ class MLnodeWindow(node_editor_window):
         self.aboutQtAct = QAction("About &Qt", self,
                 statusTip="Show the Qt library's About box",
                 triggered=QApplication.instance().aboutQt)
+    
+    def on_file_new(self):
+        try:
+            subwindow = self.create_mdi_child()
+            subwindow.widget().fileNew()
+            subwindow.show()
+        except Exception as e: print(e)
+
+    
+    def on_file_open(self):
+        file_names, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file')
+
+        try:
+            for file_name in file_names:
+                if file_name:
+                    existing = self.findMdiChild(file_name)
+                    if existing:
+                        self.mdiArea.setActiveSubWindow(existing)
+                    else:
+                        node_editor = mlnode_sub_window()
+                        if node_editor.fileload(file_name): #TODO: implement this function
+                            self.statusBar().showMessage(f'File {file_name} is loaded')
+                            node_editor.setTitle()
+                            subwindow = self.mdiArea.addSubWindow(node_editor)
+                            subwindow.show()
+                        else:
+                            node_editor.close()
+        except Exception as e: print(e)
+                
+        # if file_name == '':
+        #     return
+        # if os.path.isfile(file_name):
+        #     self.get_current_node_editor_widget().scene.loadFromFile(file_name)
+
+    def on_file_save(self):
+        current_nodeeditor = self.activeMdiChild()
+        if current_nodeeditor:
+            if not current_nodeeditor.is_file_name_set():
+                return self.on_file_save_as()
+            else:
+                current_nodeeditor.fileSave() # we don't pass argument, keep the filename
+                self.statusBar().showMessage(f'Succesfully saved {current_nodeeditor.file_name}', 5000)
+                return True
+
+    def on_file_save_as(self):
+        current_nodeeditor = self.activeMdiChild()
+        if current_nodeeditor:
+            fname, filter = QFileDialog.getSaveFileName(self, "Save graph file")
+
+            if fname == '': return False
+
+            current_nodeeditor.fileSave(fname)
+            self.statusBar().showMessage(f"Successfully saved as {fname}", 5000)
+            return True
+
+    
+    def create_mdi_child(self):
+        node_editor = mlnode_sub_window()
+        subwindow = self.mdiArea.addSubWindow(node_editor)
+        return subwindow
+    
+    def findMdiChild(self, file_name):
+
+        for window in self.mdiArea.subWindowList():
+            if window.widget().file_name == file_name:
+                return window
+        return None
+    
     def createMenus(self):
         super().createMenus()
 
@@ -76,7 +147,7 @@ class MLnodeWindow(node_editor_window):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.aboutAct)
         self.helpMenu.addAction(self.aboutQtAct)
-    
+
     def createNodesDock(self):
         self.listWidget = QListWidget()
         self.listWidget.addItem("Transpose")
@@ -121,7 +192,7 @@ class MLnodeWindow(node_editor_window):
         for i, window in enumerate(windows):
             child = window.widget()
 
-            text = "%d %s" % (i + 1, child.userFriendlyCurrentFile())
+            text = "%d %s" % (i + 1, child.get_user_friendly_file_name())
             if i < 9:
                 text = '&' + text
 
@@ -130,6 +201,12 @@ class MLnodeWindow(node_editor_window):
             action.setChecked(child is self.activeMdiChild())
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
+    
+    def activeMdiChild(self):
+        activeSubWindow = self.mdiArea.activeSubWindow()
+        if activeSubWindow:
+            return activeSubWindow.widget()
+        return None
     
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
@@ -144,13 +221,6 @@ class MLnodeWindow(node_editor_window):
         else:
             self.writeSettings()
             event.accept()
-
-    def readSettings(self):
-        settings = QSettings('Trolltech', 'MDI Example')
-        pos = settings.value('pos', QPoint(200, 200))
-        size = settings.value('size', QSize(400, 400))
-        self.move(pos)
-        self.resize(size)
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
@@ -162,8 +232,6 @@ class MLnodeWindow(node_editor_window):
                 "<a href='https://github.com/ShubhamMishra1611/MLnode'>MLnode github</a>")
 
         
-    def updateWindowMenu(self):
-        pass
 
     
 

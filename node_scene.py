@@ -6,6 +6,8 @@ from node_node import Node
 from node_edge import Edge
 from node_scene_history import scene_history
 
+class InvalidFile(Exception): pass
+
 
 class scene(Serializable):
     def __init__(self) -> None:
@@ -67,13 +69,19 @@ class scene(Serializable):
     def saveToFile(self, filename):
         with open(filename, "w") as file:
             file.write( json.dumps( self.serialize(), indent=4 ) )
-        print("saving to", filename, "was successfull.")
+        print(f'saving to  {filename} was successfull.')
 
     def loadFromFile(self, filename):
         with open(filename, "r") as file:
             raw_data = file.read().encode('utf-8')
-            data = json.loads(raw_data)
-            self.deserialize(data)
+            try:
+                data = json.loads(raw_data)
+                self.deserialize(data)
+            except json.JSONDecodeError:
+                raise InvalidFile(f'{file} is not a valid json file')
+            except Exception as e:
+                print(e)
+            
 
     def clear(self):
         while len(self.nodes) >0:

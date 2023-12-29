@@ -43,22 +43,22 @@ class MLnodeWindow(node_editor_window):
     def createActions(self):
         super().createActions()
 
-        self.closeAct = QAction("Cl&ose", self,statusTip="Close the active window",triggered=self.mdiArea.closeActiveSubWindow)
+        self.actClose = QAction("Cl&ose", self,statusTip="Close the active window",triggered=self.mdiArea.closeActiveSubWindow)
 
-        self.closeAllAct = QAction("Close &All", self,statusTip="Close all the windows",triggered=self.mdiArea.closeAllSubWindows)
+        self.actCloseAll = QAction("Close &All", self,statusTip="Close all the windows",triggered=self.mdiArea.closeAllSubWindows)
 
-        self.tileAct = QAction("&Tile", self, statusTip="Tile the windows",triggered=self.mdiArea.tileSubWindows)
+        self.actTile = QAction("&Tile", self, statusTip="Tile the windows",triggered=self.mdiArea.tileSubWindows)
 
-        self.cascadeAct = QAction("&Cascade", self,statusTip="Cascade the windows",triggered=self.mdiArea.cascadeSubWindows)
+        self.actCascade = QAction("&Cascade", self,statusTip="Cascade the windows",triggered=self.mdiArea.cascadeSubWindows)
 
-        self.nextAct = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild,statusTip="Move the focus to the next window",
+        self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild,statusTip="Move the focus to the next window",
                 triggered=self.mdiArea.activateNextSubWindow)
 
-        self.previousAct = QAction("Pre&vious", self,shortcut=QKeySequence.PreviousChild,statusTip="Move the focus to the previous window",
+        self.actPrevious = QAction("Pre&vious", self,shortcut=QKeySequence.PreviousChild,statusTip="Move the focus to the previous window",
                 triggered=self.mdiArea.activatePreviousSubWindow)
 
-        self.separatorAct = QAction(self)
-        self.separatorAct.setSeparator(True)
+        self.actSeparator = QAction(self)
+        self.actSeparator.setSeparator(True)
 
         self.aboutAct = QAction("&About", self,
                 statusTip="Show the application's About box",
@@ -87,7 +87,7 @@ class MLnodeWindow(node_editor_window):
                         self.mdiArea.setActiveSubWindow(existing)
                     else:
                         node_editor = mlnode_sub_window()
-                        if node_editor.fileload(file_name): #TODO: implement this function
+                        if node_editor.fileload(file_name): 
                             self.statusBar().showMessage(f'File {file_name} is loaded')
                             node_editor.setTitle()
                             subwindow = self.mdiArea.addSubWindow(node_editor)
@@ -101,26 +101,26 @@ class MLnodeWindow(node_editor_window):
         # if os.path.isfile(file_name):
         #     self.get_current_node_editor_widget().scene.loadFromFile(file_name)
 
-    def on_file_save(self):
-        current_nodeeditor = self.activeMdiChild()
-        if current_nodeeditor:
-            if not current_nodeeditor.is_file_name_set():
-                return self.on_file_save_as()
-            else:
-                current_nodeeditor.fileSave() # we don't pass argument, keep the filename
-                self.statusBar().showMessage(f'Succesfully saved {current_nodeeditor.file_name}', 5000)
-                return True
+    # def on_file_save(self):
+    #     current_nodeeditor = self.activeMdiChild()
+    #     if current_nodeeditor:
+    #         if not current_nodeeditor.is_file_name_set():
+    #             return self.on_file_save_as()
+    #         else:
+    #             current_nodeeditor.fileSave() # we don't pass argument, keep the filename
+    #             self.statusBar().showMessage(f'Succesfully saved {current_nodeeditor.file_name}', 5000)
+    #             return True
 
-    def on_file_save_as(self):
-        current_nodeeditor = self.activeMdiChild()
-        if current_nodeeditor:
-            fname, filter = QFileDialog.getSaveFileName(self, "Save graph file")
+    # def on_file_save_as(self):
+    #     current_nodeeditor = self.activeMdiChild()
+    #     if current_nodeeditor:
+    #         fname, filter = QFileDialog.getSaveFileName(self, "Save graph file")
 
-            if fname == '': return False
+    #         if fname == '': return False
 
-            current_nodeeditor.fileSave(fname)
-            self.statusBar().showMessage(f"Successfully saved as {fname}", 5000)
-            return True
+    #         current_nodeeditor.fileSave(fname)
+    #         self.statusBar().showMessage(f"Successfully saved as {fname}", 5000)
+    #         return True
 
     
     def create_mdi_child(self):
@@ -176,18 +176,18 @@ class MLnodeWindow(node_editor_window):
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
-        self.windowMenu.addAction(self.closeAct)
-        self.windowMenu.addAction(self.closeAllAct)
+        self.windowMenu.addAction(self.actClose)
+        self.windowMenu.addAction(self.actCloseAll)
         self.windowMenu.addSeparator()
-        self.windowMenu.addAction(self.tileAct)
-        self.windowMenu.addAction(self.cascadeAct)
+        self.windowMenu.addAction(self.actTile)
+        self.windowMenu.addAction(self.actCascade)
         self.windowMenu.addSeparator()
-        self.windowMenu.addAction(self.nextAct)
-        self.windowMenu.addAction(self.previousAct)
-        self.windowMenu.addAction(self.separatorAct)
+        self.windowMenu.addAction(self.actNext)
+        self.windowMenu.addAction(self.actPrevious)
+        self.windowMenu.addAction(self.actSeparator)
 
         windows = self.mdiArea.subWindowList()
-        self.separatorAct.setVisible(len(windows) != 0)
+        self.actSeparator.setVisible(len(windows) != 0)
 
         for i, window in enumerate(windows):
             child = window.widget()
@@ -198,7 +198,7 @@ class MLnodeWindow(node_editor_window):
 
             action = self.windowMenu.addAction(text)
             action.setCheckable(True)
-            action.setChecked(child is self.activeMdiChild())
+            action.setChecked(child is self.get_current_node_editor_widget())
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
     
@@ -211,8 +211,29 @@ class MLnodeWindow(node_editor_window):
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
 
+    def get_current_node_editor_widget(self):
+        """ we're returning NodeEditorWidget here... """
+        activeSubWindow = self.mdiArea.activeSubWindow()
+        if activeSubWindow:
+            return activeSubWindow.widget()
+        return None
+
+    
     def updateMenus(self):
-        pass
+        print("update Menus")
+        active = self.get_current_node_editor_widget()
+        hasMdiChild = (active is not None)
+
+        self.actSave.setEnabled(hasMdiChild)
+        self.actSaveAs.setEnabled(hasMdiChild)
+        self.actClose.setEnabled(hasMdiChild)
+        self.actCloseAll.setEnabled(hasMdiChild)
+        self.actTile.setEnabled(hasMdiChild)
+        self.actCascade.setEnabled(hasMdiChild)
+        self.actNext.setEnabled(hasMdiChild)
+        self.actPrevious.setEnabled(hasMdiChild)
+        self.actSeparator.setVisible(hasMdiChild)
+
     
     def closeEvent(self, event):
         self.mdiArea.closeAllSubWindows()

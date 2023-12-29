@@ -78,21 +78,41 @@ class node_editor_window(QMainWindow):
 
 
     def on_file_save(self):
-        if self.get_current_node_editor_widget().file_name is None: return self.on_file_save_as()
-        self.get_current_node_editor_widget().fileSave()
-        self.statusBar().showMessage(f"Successfully saved {self.get_current_node_editor_widget().file_name}")
-        # self.setTitle()
-        return True
+        # if self.get_current_node_editor_widget().file_name is None: return self.on_file_save_as()
+        # self.get_current_node_editor_widget().fileSave()
+        # self.statusBar().showMessage(f"Successfully saved {self.get_current_node_editor_widget().file_name}")
+        # # self.setTitle()
+        # return True
+        current_nodeeditor = self.get_current_node_editor_widget()
+        if current_nodeeditor is not None:
+            if not current_nodeeditor.is_file_name_set(): return self.on_file_save_as()
+
+            current_nodeeditor.fileSave()
+            self.statusBar().showMessage("Successfully saved %s" % current_nodeeditor.file_name, 5000)
+
+            return True
+
+        # return True
 
     def on_file_save_as(self):
 
-        file_name, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
-        if file_name == '':
-            return False
-        self.get_current_node_editor_widget().fileSave(file_name)
-        self.statusBar().showMessage(f'Successfully saved as {self.get_current_node_editor_widget().file_name}')
-        # self.setTitle()
-        return True
+        # file_name, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
+        # if file_name == '':
+        #     return False
+        # self.get_current_node_editor_widget().fileSave(file_name)
+        # self.statusBar().showMessage(f'Successfully saved as {self.get_current_node_editor_widget().file_name}')
+        # # self.setTitle()
+        # return True
+        current_nodeeditor = self.get_current_node_editor_widget()
+        if current_nodeeditor is not None:
+            fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
+            if fname == '': return False
+
+            current_nodeeditor.fileSave(fname)
+            self.statusBar().showMessage("Successfully saved as %s" % current_nodeeditor.file_name, 5000)
+
+            return True
+
 
 
     def on_undo(self):

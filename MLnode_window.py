@@ -96,31 +96,6 @@ class MLnodeWindow(node_editor_window):
                             node_editor.close()
         except Exception as e: print(e)
                 
-        # if file_name == '':
-        #     return
-        # if os.path.isfile(file_name):
-        #     self.get_current_node_editor_widget().scene.loadFromFile(file_name)
-
-    # def on_file_save(self):
-    #     current_nodeeditor = self.activeMdiChild()
-    #     if current_nodeeditor:
-    #         if not current_nodeeditor.is_file_name_set():
-    #             return self.on_file_save_as()
-    #         else:
-    #             current_nodeeditor.fileSave() # we don't pass argument, keep the filename
-    #             self.statusBar().showMessage(f'Succesfully saved {current_nodeeditor.file_name}', 5000)
-    #             return True
-
-    # def on_file_save_as(self):
-    #     current_nodeeditor = self.activeMdiChild()
-    #     if current_nodeeditor:
-    #         fname, filter = QFileDialog.getSaveFileName(self, "Save graph file")
-
-    #         if fname == '': return False
-
-    #         current_nodeeditor.fileSave(fname)
-    #         self.statusBar().showMessage(f"Successfully saved as {fname}", 5000)
-    #         return True
 
     
     def create_mdi_child(self):
@@ -147,6 +122,7 @@ class MLnodeWindow(node_editor_window):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.aboutAct)
         self.helpMenu.addAction(self.aboutQtAct)
+        self.editMenu.aboutToShow.connect(self.updateEditMenu)
 
     def createNodesDock(self):
         self.listWidget = QListWidget()
@@ -220,7 +196,6 @@ class MLnodeWindow(node_editor_window):
 
     
     def updateMenus(self):
-        print("update Menus")
         active = self.get_current_node_editor_widget()
         hasMdiChild = (active is not None)
 
@@ -233,6 +208,18 @@ class MLnodeWindow(node_editor_window):
         self.actNext.setEnabled(hasMdiChild)
         self.actPrevious.setEnabled(hasMdiChild)
         self.actSeparator.setVisible(hasMdiChild)
+
+        self.updateEditMenu()
+
+    def updateEditMenu(self):
+        print("update Edit Menu")
+        active = self.get_current_node_editor_widget()
+        hasMdiChild = (active is not None)
+        self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+
+        self.actUndo.setEnabled(hasMdiChild and active.canUndo())
+        self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+
 
     
     def closeEvent(self, event):

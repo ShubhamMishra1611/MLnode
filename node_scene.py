@@ -83,6 +83,10 @@ class scene(Serializable):
                 print(e)
             
 
+    def getSelectedItems(self):
+        return self.grscene.selectedItems()
+
+    
     def clear(self):
         while len(self.nodes) >0:
             self.nodes[0].remove()

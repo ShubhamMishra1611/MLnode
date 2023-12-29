@@ -27,6 +27,19 @@ class node_editor_widget(QWidget):
     def get_user_friendly_file_name(self):
         name = os.path.basename(self.file_name) if self.is_file_name_set() else "New untitled Graph"
         return name
+    
+    def getSelectedItems(self):
+        return self.scene.getSelectedItems()
+
+    def hasSelectedItems(self):
+        return self.getSelectedItems() != []
+
+    def canUndo(self):
+        return self.scene.history.canUndo()
+
+    def canRedo(self):
+        return self.scene.history.canRedo()
+
 
     def initUI(self):
         
@@ -60,6 +73,8 @@ class node_editor_widget(QWidget):
         edge2 = Edge(self.scene, node_2.outputs[0], node_3.inputs[0], type_edge=EDGE_BEZIER)
         edge3 = Edge(self.scene, node_3.outputs[0], node_4.inputs[0], type_edge=EDGE_BEZIER)
 
+        self.scene.history.storeInitialHistoryStamp()
+
 
     def loadStylesheet(self, filename):
         print('STYLE loading:', filename)
@@ -71,6 +86,9 @@ class node_editor_widget(QWidget):
     def fileNew(self):
         self.scene.clear()
         self.file_name = None
+        self.scene.history.clear()
+        self.scene.history.storeInitialHistoryStamp()
+
 
     
     def fileload(self, file_name):

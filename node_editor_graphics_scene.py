@@ -25,6 +25,9 @@ class Node_Editor_Graphics_Scene(QGraphicsScene):
         # set the background color
         self.setBackgroundBrush(self._back_color)
 
+    def dragMoveEvent(self, event):
+        pass
+
     def set_scene(self, width, height):
         # set a rectangular 
         self.setSceneRect(

@@ -1,6 +1,8 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from MLnode_conf import *
+
 
 
 class QDragListbox(QListWidget):
@@ -18,12 +20,12 @@ class QDragListbox(QListWidget):
 
 
     def addMyItems(self):
-        self.addMyItem("Input", "icons/unit_mat.png")
-        self.addMyItem("Output", "icons/output.png")
-        self.addMyItem("Add", "icons/add_mat.png")
-        self.addMyItem("MatMul", "icons/mat_mul.png")
-        self.addMyItem("Transpose", "icons/mat_transpose.png")
-        self.addMyItem("Scalar", "icons/scalar_num.png")
+        self.addMyItem("Input", "icons/unit_mat.png", OP_NODE_INPUT)
+        self.addMyItem("Output", "icons/output.png", OP_NODE_OUTPUT)
+        self.addMyItem("Add", "icons/add_mat.png", OP_NODE_ADD)
+        self.addMyItem("MatMul", "icons/mat_mul.png", OP_NODE_MATMUL)
+        self.addMyItem("Transpose", "icons/mat_transpose.png", OP_NODE_TRANSPOSE)
+        self.addMyItem("Scalar", "icons/scalar_num.png", OP_NODE_SCALAR)
 
     def addMyItem(self, name, icon=None, op_code=0):
         item = QListWidgetItem(name, self) # can be (icon, text, parent, <int>type)
@@ -36,3 +38,32 @@ class QDragListbox(QListWidget):
         # setup data
         item.setData(Qt.UserRole, pixmap)
         item.setData(Qt.UserRole + 1, op_code)
+
+    def startDrag(self, *args, **kwargs):
+        # print("ListBox::startDrag")
+
+        try:
+            item = self.currentItem()
+            op_code = item.data(Qt.UserRole + 1)
+
+            pixmap = QPixmap(item.data(Qt.UserRole))
+
+
+            itemData = QByteArray()
+            dataStream = QDataStream(itemData, QIODevice.WriteOnly)
+            dataStream << pixmap
+            dataStream.writeInt(op_code)
+            dataStream.writeQString(item.text())
+
+            mimeData = QMimeData()
+            mimeData.setData(LISTBOX_MIMETYPE, itemData)
+
+            drag = QDrag(self)
+            drag.setMimeData(mimeData)
+            drag.setHotSpot(QPoint(pixmap.width() // 2, pixmap.height() // 2))
+            drag.setPixmap(pixmap)
+
+            drag.exec_(Qt.MoveAction)
+
+        except Exception as e: print(e)
+

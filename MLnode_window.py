@@ -231,7 +231,6 @@ class MLnodeWindow(node_editor_window):
 
     def updateEditMenu(self):
         try:
-            print("update Edit Menu")
             active = self.get_current_node_editor_widget()
             hasMdiChild = (active is not None)
             self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())

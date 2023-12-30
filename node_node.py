@@ -4,7 +4,7 @@ from node_serializable import Serializable
 from node_graphics import QgraphicsNode
 from node_content_widget import QNode_content_widget
 from node_socket import Socket, LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
-DEBUG = True
+DEBUG = False
 class Node(Serializable):
     def __init__(self, scene, title="Undefined Node", inputs = [], outputs = []) -> None:
         super().__init__()

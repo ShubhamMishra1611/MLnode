@@ -11,7 +11,7 @@ MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
 MODE_EDGE_CUT = 3
 EDGE_DRAG_START_THRESHOLD = 10
-DEBUG = True
+DEBUG = False
 
 class Node_Editor_Graphics_View(QGraphicsView):
     scene_pos_changed = pyqtSignal(int, int)
@@ -37,6 +37,10 @@ class Node_Editor_Graphics_View(QGraphicsView):
 
         self.scene.addItem(self.cutline)
 
+        self._drag_enter_listeners = []
+        self._drop_listeners = []
+
+
     def initUI(self):
         self.setRenderHints(QPainter.Antialiasing | QPainter.HighQualityAntialiasing | QPainter.TextAntialiasing | QPainter.SmoothPixmapTransform)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
@@ -45,6 +49,19 @@ class Node_Editor_Graphics_View(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setDragMode(QGraphicsView.RubberBandDrag)
+        self.setAcceptDrops(True)
+
+    def dragEnterEvent(self, event):
+        for callback in self._drag_enter_listeners: callback(event)
+
+    def dropEvent(self, event):
+        for callback in self._drop_listeners: callback(event)
+
+    def addDragEnterListener(self, callback):
+        self._drag_enter_listeners.append(callback)
+
+    def addDropListener(self, callback):
+        self._drop_listeners.append(callback)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         zoom_out_factor = 1/self.zoom_in_factor

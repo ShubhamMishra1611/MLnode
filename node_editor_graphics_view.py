@@ -173,6 +173,20 @@ class Node_Editor_Graphics_View(QGraphicsView):
         if self.rubber_band_dragging_rectangle:
             self.rubber_band_dragging_rectangle = False
             self.scene.scene.history.store_history("selection changed")
+            current_selected_items = self.scene.selectedItems()
+
+            if current_selected_items != self.scene.scene._last_selected_items:
+                if current_selected_items == []:
+                    self.scene.itemsDeselected.emit()
+                else:
+                    self.scene.itemSelected.emit()
+                self.scene.scene._last_selected_items = current_selected_items
+
+            return
+        if item is None:
+            self.scene.itemsDeselected.emit()
+
+
 
         super().mouseReleaseEvent(event)
 

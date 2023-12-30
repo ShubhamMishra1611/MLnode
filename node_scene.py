@@ -17,6 +17,7 @@ class scene(Serializable):
 
         self.width, self.height = 16000, 16000
         self._has_been_modified = False
+        self._last_selected_items = []
         self._has_been_modified_listeners = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
@@ -34,10 +35,20 @@ class scene(Serializable):
         self.grscene.set_scene(self.width, self.height)
 
     def onItemSelected(self):
-        print("SCENE:: ~onItemSelected")
+        current_selected_items = self.getSelectedItems()
+        if current_selected_items != self._last_selected_items:
+            self._last_selected_items = current_selected_items
+            self.history.store_history("Selection Changed")
+            for callback in self._item_selected_listeners: callback()
+
 
     def onItemsDeselected(self):
-        print("SCENE:: ~onItemsDeselected")
+        self.resetLastSelectedStates()
+        if self._last_selected_items != []:
+            self._last_selected_items = []
+            self.history.store_history("Deselected Everything")
+            for callback in self._items_deselected_listeners: callback()
+
 
 
     @property

@@ -70,11 +70,15 @@ class QgraphicsNode(QGraphicsItem):
         if self._last_selected_state != self.isSelected():
             self.node.scene.resetLastSelectedStates()
             self._last_selected_state = self.isSelected()
+            self.node.scene._last_selected_items = self.node.scene.getSelectedItems()
+            return 
+        if self._last_selected_state != self.isSelected() or self.node.scene._last_selected_items != self.node.scene.getSelectedItems():
+            self.node.scene.resetLastSelectedStates()
+            self._last_selected_state = self.isSelected()
             self.onSelected()
 
     
     def onSelected(self):
-        # print("grNode onSelected")
         self.node.scene.grscene.itemSelected.emit()
 
 

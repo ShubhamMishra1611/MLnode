@@ -171,8 +171,8 @@ class Node_Editor_Graphics_View(QGraphicsView):
         
         # if self.dragMode() == QGraphicsView.RubberBandDrag:
         if self.rubber_band_dragging_rectangle:
-            self.scene.scene.history.store_history("selection changed")
             self.rubber_band_dragging_rectangle = False
+            self.scene.scene.history.store_history("selection changed")
 
         super().mouseReleaseEvent(event)
 

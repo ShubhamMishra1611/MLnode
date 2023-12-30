@@ -18,10 +18,27 @@ class scene(Serializable):
         self.width, self.height = 16000, 16000
         self._has_been_modified = False
         self._has_been_modified_listeners = []
+        self._item_selected_listeners = []
+        self._items_deselected_listeners = []
+
+
 
 
         self.initUI()
         self.history = scene_history(self)
+        self.grscene.itemSelected.connect(self.onItemSelected)
+        self.grscene.itemsDeselected.connect(self.onItemsDeselected)
+
+    def initUI(self):
+        self.grscene = Node_Editor_Graphics_Scene(self)
+        self.grscene.set_scene(self.width, self.height)
+
+    def onItemSelected(self):
+        print("SCENE:: ~onItemSelected")
+
+    def onItemsDeselected(self):
+        print("SCENE:: ~onItemsDeselected")
+
 
     @property
     def has_been_modified(self):
@@ -43,10 +60,18 @@ class scene(Serializable):
     def addHasBeenModifiedListener(self, callback):
         self._has_been_modified_listeners.append(callback)
 
-    def initUI(self):
-        self.grscene = Node_Editor_Graphics_Scene(self)
-        self.grscene.set_scene(self.width, self.height)
-        
+    def addItemSelectedListener(self, callback):
+        self._item_selected_listeners.append(callback) 
+
+    def addItemsDeselectedListener(self, callback):
+        self._items_deselected_listeners.append(callback)
+
+    def resetLastSelectedStates(self):
+        for node in self.nodes:
+            node.graphical_node._last_selected_state = False
+        for edge in self.edges:
+            edge.graphical_edge._last_selected_state = False
+
 
     def add_node(self, node):
         self.nodes.append(node)

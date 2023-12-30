@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QGraphicsSceneMouseEvent
 from node_socket import *
 
 EDGE_CP_BOUNDINESS = 100
@@ -9,6 +10,22 @@ class Qgraphics_edge(QGraphicsPathItem):
     def __init__(self, edge, parent = None):
         super().__init__(parent)
 
+        
+        self.edge = edge
+        self._last_selected_state = False
+        
+        self.position_source = [0,0]
+        self.position_destination = [200, 100]
+
+        self.initAssets()
+        self.initUI()
+
+    def initUI(self):
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setZValue(-1)
+
+
+    def initAssets(self):
         self._color = QColor('#001000')
         self._color_selected = QColor('#00ff00')
 
@@ -16,16 +33,21 @@ class Qgraphics_edge(QGraphicsPathItem):
         self._pen_selected = QPen(self._color_selected)
         self._pen_dragging = QPen(self._color)
         self._pen_dragging.setStyle(Qt.DashLine)
-        self.edge = edge
         self._pen.setWidthF(2.0)
         self._pen_selected.setWidthF(2.0)
         self._pen_dragging.setWidthF(2.0)
 
-        self.setZValue(-1) # lets see
+    def onSelected(self):
+        self.edge.scene.grscene.itemSelected.emit()
 
-        self.setFlag(QGraphicsItem.ItemIsSelectable)
-        self.position_source = [0,0]
-        self.position_destination = [200, 100]
+    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        super().mouseReleaseEvent(event)
+        if self._last_selected_state != self.isSelected():
+            self.edge.scene.resetLastSelectedStates()
+            self._last_selected_state = self.isSelected()
+            self.onSelected()
+
+
 
     def set_source(self, x, y):
         self.position_source = [x, y]

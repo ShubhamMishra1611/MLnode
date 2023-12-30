@@ -1,10 +1,13 @@
 import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QColor, QPainter, QPen, QBrush
-from PyQt5.QtCore import QRectF
+from PyQt5.QtCore import *
 
 
 class Node_Editor_Graphics_Scene(QGraphicsScene):
+    itemSelected = pyqtSignal()
+    itemsDeselected = pyqtSignal()
+
     def __init__(self, scene, parent = None):
         super().__init__(parent)
         self.grid_size = 50

@@ -56,8 +56,11 @@ class mlnode_sub_window(node_editor_widget):
 
             # @TODO Fix me!
             # node = MLnode_node(self.scene, text, inputs=[1,1], outputs=[2])
-            node = MLnode_node(self.scene, op_code, text, inputs=[1,1], outputs=[2])
-            node.setPos(scene_position.x(), scene_position.y())
+            # node = MLnode_node(self.scene, op_code, text, inputs=[1,1], outputs=[2])
+            try:
+                node = get_class_from_opcode(op_code)(self.scene)
+                node.setPos(scene_position.x(), scene_position.y())
+            except Exception as e: print(e)
             # self.scene.add_node(node)
 
 

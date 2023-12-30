@@ -6,6 +6,11 @@ from PyQt5.QtGui import *
 from node_editor_window import node_editor_window
 from MLnode_sub_window import mlnode_sub_window
 from MLnode_listbox_drag import QDragListbox
+from MLnode_conf import *
+from MLnode_conf_nodes import *
+from pprint import pprint as pp 
+
+DEBUG = True
 
 class MLnodeWindow(node_editor_window):
 
@@ -14,6 +19,9 @@ class MLnodeWindow(node_editor_window):
         self.name_product = 'MLnode'
 
         self.empty_icon = QIcon(".")
+        if DEBUG:
+            print("Registered nodes:")
+            pp(CALC_NODES)
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)

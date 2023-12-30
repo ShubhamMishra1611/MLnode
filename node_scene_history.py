@@ -7,13 +7,15 @@ class scene_history:
         self.scene = scene
         self.history_stack = []
         self.history_stack_max_length = 16
+        self._history_modified_listeners = []
         self.history_current_idx = -1
 
     def undo(self):
         if DEBUG: print("UNDO")
-        if self.history_current_idx > 0:
+        if self.canUndo():
             self.history_current_idx -= 1
             self.restore_history()
+            self.scene._has_been_modified = True
     
     def clear(self):
         self.history_stack = []
@@ -22,13 +24,19 @@ class scene_history:
     
     def redo(self):
         if DEBUG: print("REDO")
-        if self.history_current_idx+1<len(self.history_stack):
+        if self.canRedo():
             self.history_current_idx+=1
             self.restore_history()
+            self.scene._has_been_modified = True
+
+    def addHistoryModifiedListener(self, callback):
+        self._history_modified_listeners.append(callback)
+
 
     def restore_history(self):
         if DEBUG: print(f"restoring history ... current step : {self.history_current_idx} and length is : {len(self.history_stack)}")
         self.restore_history_stamp(self.history_stack[self.history_current_idx])
+        for callback in self._history_modified_listeners: callback()
 
     def store_history(self, desc):
         if DEBUG: print(f'storing history with current step: {self.history_current_idx} and length is : {len(self.history_stack)}')
@@ -43,6 +51,7 @@ class scene_history:
         hs = self.create_history_stamp(desc)
         self.history_stack.append(hs)
         self.history_current_idx+=1
+        for callback in self._history_modified_listeners: callback()
 
     def create_history_stamp(self, desc):
         sel_obj = {
@@ -95,14 +104,3 @@ class scene_history:
             print("Error restoring history stamp", e)
             # traceback.print_exc()
             return False
-
-        # for edge_id in history_stamp['selection']['edges']:
-        #     for edge in self.scene.edges:
-        #         if edge.id == edge_id:
-        #             edge.graphical_edge.setSelected(True)
-        #             break
-        # for node_id in history_stamp['selection']['nodes']:
-        #     for node in self.scene.nodes:
-        #         if node.id == node_id:
-        #             node.graphical_node.setSelected(True)
-        #             break

@@ -7,14 +7,12 @@ from node_editor_window import node_editor_window
 from MLnode_sub_window import mlnode_sub_window
 
 class MLnodeWindow(node_editor_window):
-#     def __init__(self, parent: QWidget = None) -> None:
-#         super().__init__()
-#         self.initUI()
 
     def init_UI(self):
         self.name_company = 'MLnode'
         self.name_product = 'MLnode'
 
+        self.empty_icon = QIcon(".")
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -88,9 +86,10 @@ class MLnodeWindow(node_editor_window):
                     else:
                         node_editor = mlnode_sub_window()
                         if node_editor.fileload(file_name): 
-                            self.statusBar().showMessage(f'File {file_name} is loaded')
+                            self.statusBar().showMessage(f'File {file_name} is loaded', 5000)
                             node_editor.setTitle()
-                            subwindow = self.mdiArea.addSubWindow(node_editor)
+                            # subwindow = self.mdiArea.addSubWindow(node_editor)
+                            subwindow = self.create_mdi_child(node_editor)
                             subwindow.show()
                         else:
                             node_editor.close()
@@ -98,10 +97,24 @@ class MLnodeWindow(node_editor_window):
                 
 
     
-    def create_mdi_child(self):
-        node_editor = mlnode_sub_window()
+    def create_mdi_child(self, child_widget = None):
+        node_editor = child_widget if child_widget is not None else mlnode_sub_window()
         subwindow = self.mdiArea.addSubWindow(node_editor)
+        subwindow.setWindowIcon(self.empty_icon)
+        node_editor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        node_editor.addCloseEventListener(self.onSubWndClose)
         return subwindow
+    
+    def onSubWndClose(self, widget, event):
+        existing = self.findMdiChild(widget.file_name)
+        self.mdiArea.setActiveSubWindow(existing)
+
+        event.accept()
+        # if self.maybeSave(): # TODO: implement maybeSave
+        #     event.accept()
+        # else:
+        #     event.ignore()
+
     
     def findMdiChild(self, file_name):
 
@@ -212,13 +225,15 @@ class MLnodeWindow(node_editor_window):
         self.updateEditMenu()
 
     def updateEditMenu(self):
-        print("update Edit Menu")
-        active = self.get_current_node_editor_widget()
-        hasMdiChild = (active is not None)
-        self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+        try:
+            print("update Edit Menu")
+            active = self.get_current_node_editor_widget()
+            hasMdiChild = (active is not None)
+            self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
 
-        self.actUndo.setEnabled(hasMdiChild and active.canUndo())
-        self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+            self.actUndo.setEnabled(hasMdiChild and active.canUndo())
+            self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+        except Exception as e: print(e)
 
 
     

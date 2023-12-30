@@ -9,5 +9,14 @@ class mlnode_sub_window(node_editor_widget):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
 
+        self._close_event_listeners = []
+
+
     def setTitle(self):
         self.setWindowTitle(self.get_user_friendly_file_name())
+
+    def addCloseEventListener(self, callback):
+        self._close_event_listeners.append(callback)
+
+    def closeEvent(self, event):
+        for callback in self._close_event_listeners: callback(self, event)

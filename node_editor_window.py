@@ -78,11 +78,6 @@ class node_editor_window(QMainWindow):
 
 
     def on_file_save(self):
-        # if self.get_current_node_editor_widget().file_name is None: return self.on_file_save_as()
-        # self.get_current_node_editor_widget().fileSave()
-        # self.statusBar().showMessage(f"Successfully saved {self.get_current_node_editor_widget().file_name}")
-        # # self.setTitle()
-        # return True
         current_nodeeditor = self.get_current_node_editor_widget()
         if current_nodeeditor is not None:
             if not current_nodeeditor.is_file_name_set(): return self.on_file_save_as()
@@ -92,17 +87,8 @@ class node_editor_window(QMainWindow):
 
             return True
 
-        # return True
 
     def on_file_save_as(self):
-
-        # file_name, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
-        # if file_name == '':
-        #     return False
-        # self.get_current_node_editor_widget().fileSave(file_name)
-        # self.statusBar().showMessage(f'Successfully saved as {self.get_current_node_editor_widget().file_name}')
-        # # self.setTitle()
-        # return True
         current_nodeeditor = self.get_current_node_editor_widget()
         if current_nodeeditor is not None:
             fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
@@ -116,14 +102,17 @@ class node_editor_window(QMainWindow):
 
 
     def on_undo(self):
-        self.get_current_node_editor_widget().scene.history.undo()
+        if self.get_current_node_editor_widget():
+            self.get_current_node_editor_widget().scene.history.undo()
 
     def on_redo(self):
-        self.get_current_node_editor_widget().scene.history.redo()
+        if self.get_current_node_editor_widget():
+            self.get_current_node_editor_widget().scene.history.redo()
 
 
     def on_delete(self):
-        self.get_current_node_editor_widget().scene.grscene.views()[0].delete_selected()
+        if self.get_current_node_editor_widget():
+            self.get_current_node_editor_widget().scene.grscene.views()[0].delete_selected()
         
 
     def get_current_node_editor_widget(self):

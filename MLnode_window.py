@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 
 from node_editor_window import node_editor_window
 from MLnode_sub_window import mlnode_sub_window
+from MLnode_listbox_drag import QDragListbox
 
 class MLnodeWindow(node_editor_window):
 
@@ -26,13 +27,13 @@ class MLnodeWindow(node_editor_window):
         self.windowMapper = QSignalMapper(self)
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
+        self.createNodesDock()
         self.createActions()
         self.createMenus()
         self.createToolBars()
         self.createStatusBar()
         self.updateMenus()
 
-        self.createNodesDock()
 
         self.readSettings()
 
@@ -88,7 +89,6 @@ class MLnodeWindow(node_editor_window):
                         if node_editor.fileload(file_name): 
                             self.statusBar().showMessage(f'File {file_name} is loaded', 5000)
                             node_editor.setTitle()
-                            # subwindow = self.mdiArea.addSubWindow(node_editor)
                             subwindow = self.create_mdi_child(node_editor)
                             subwindow.show()
                         else:
@@ -138,33 +138,31 @@ class MLnodeWindow(node_editor_window):
         self.editMenu.aboutToShow.connect(self.updateEditMenu)
 
     def createNodesDock(self):
-        self.listWidget = QListWidget()
-        self.listWidget.addItem("Transpose")
-        self.listWidget.addItem("Unit Matrix")
-        self.listWidget.addItem("Dot Product")
-        self.listWidget.addItem("Matmul")
+        # self.listWidget = QListWidget()
+        # self.listWidget.addItem("Transpose")
+        # self.listWidget.addItem("Unit Matrix")
+        # self.listWidget.addItem("Dot Product")
+        # self.listWidget.addItem("Matmul")
+        self.nodesListWidget = QDragListbox()
 
-        self.items = QDockWidget("Nodes")
-        self.items.setWidget(self.listWidget)
-        self.items.setFloating(False)
+        self.nodesDock = QDockWidget("Nodes")
+        self.nodesDock.setWidget(self.nodesListWidget)
+        self.nodesDock.setFloating(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.nodesDock)
 
 
     def createToolBars(self):
-        # self.fileToolBar = self.addToolBar("File")
-        # self.fileToolBar.addAction(self.newAct)
-        # self.fileToolBar.addAction(self.openAct)
-        # self.fileToolBar.addAction(self.saveAct)
-
-        # self.editToolBar = self.addToolBar("Edit")
-        # self.editToolBar.addAction(self.cutAct)
-        # self.editToolBar.addAction(self.copyAct)
-        # self.editToolBar.addAction(self.pasteAct)
         pass
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
+        toolbar_nodes = self.windowMenu.addAction("Nodes Toolbar")
+        toolbar_nodes.setCheckable(True)
+        toolbar_nodes.triggered.connect(self.onWindowNodesToolbar)
+        toolbar_nodes.setChecked(self.nodesDock.isVisible())
+
+        self.windowMenu.addSeparator()
         self.windowMenu.addAction(self.actClose)
         self.windowMenu.addAction(self.actCloseAll)
         self.windowMenu.addSeparator()
@@ -190,6 +188,13 @@ class MLnodeWindow(node_editor_window):
             action.setChecked(child is self.get_current_node_editor_widget())
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
+    
+    def onWindowNodesToolbar(self):
+        if self.nodesDock.isVisible():
+            self.nodesDock.hide()
+        else:
+            self.nodesDock.show()
+
     
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()

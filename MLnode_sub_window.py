@@ -2,8 +2,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QWidget
 from node_editor_widget import node_editor_widget
-from node_node import Node
 from MLnode_conf import *
+from MLnode_node_base import *
 
 
 class mlnode_sub_window(node_editor_widget):
@@ -55,9 +55,10 @@ class mlnode_sub_window(node_editor_widget):
 
 
             # @TODO Fix me!
-            node = Node(self.scene, text, inputs=[1,1], outputs=[2])
+            # node = MLnode_node(self.scene, text, inputs=[1,1], outputs=[2])
+            node = MLnode_node(self.scene, op_code, text, inputs=[1,1], outputs=[2])
             node.setPos(scene_position.x(), scene_position.y())
-            self.scene.add_node(node)
+            # self.scene.add_node(node)
 
 
             event.setDropAction(Qt.MoveAction)

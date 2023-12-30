@@ -10,31 +10,74 @@ class Node(Serializable):
         super().__init__()
         self._title = title
         self.scene = scene
-        self.content = QNode_content_widget(self)
-        self.graphical_node = QgraphicsNode(self)
+        # self.content = QNode_content_widget(self)
+        # self.graphical_node = QgraphicsNode(self)
+        self.initInnerClasses()
+        self.initSettings()
+
 
         self.title = title
         self.scene.add_node(self)
         self.scene.grscene.addItem(self.graphical_node)
-        self.socket_spacing = 20
+        # self.socket_spacing = 20
 
 
         self.inputs = []
         self.outputs = []
+        self.initSockets(inputs, outputs)
+        # counter = 0
+
+        # for item in inputs:
+        #     socket = Socket(node=self, index=counter, position=LEFT_BOTTOM,socket_type = item, multi_edges=False)
+        #     counter+=1
+        #     self.inputs.append(socket)
+        # counter = 0
+        # for item in outputs:
+        #     socket = Socket(node=self, index=counter, position=RIGHT_TOP,socket_type = item, multi_edges=True)
+        #     counter+=1
+        #     self.outputs.append(socket)
+
+    def __str__(self) -> str:
+        return "<Node %s>" % (hex(id(self)))
+    
+    def initInnerClasses(self):
+        self.content = QNode_content_widget(self)
+        self.graphical_node = QgraphicsNode(self)
+
+    def initSettings(self):
+        self.socket_spacing = 20
+
+        self.input_socket_position = LEFT_BOTTOM
+        self.output_socket_position = RIGHT_TOP
+        self.input_multi_edged = False
+        self.output_multi_edged = True
+
+    def initSockets(self, inputs, outputs, reset=True):
+        """ Create sockets for inputs and outputs"""
+
+        if reset:
+            # clear old sockets
+            if hasattr(self, 'inputs') and hasattr(self, 'outputs'):
+                # remove grSockets from scene
+                for socket in (self.inputs+self.outputs):
+                    self.scene.grscene.removeItem(socket.graphics_socket)
+                self.inputs = []
+                self.outputs = []
+
         counter = 0
 
         for item in inputs:
-            socket = Socket(node=self, index=counter, position=LEFT_BOTTOM,socket_type = item, multi_edges=False)
+            socket = Socket(node=self, index=counter, position=self.input_socket_position,socket_type = item, multi_edges=self.input_multi_edged)
             counter+=1
             self.inputs.append(socket)
         counter = 0
         for item in outputs:
-            socket = Socket(node=self, index=counter, position=RIGHT_TOP,socket_type = item, multi_edges=True)
+            socket = Socket(node=self, index=counter, position=self.output_socket_position,socket_type = item, multi_edges=self.output_multi_edged)
             counter+=1
             self.outputs.append(socket)
 
-    def __str__(self) -> str:
-        return "<Node %s>" % (hex(id(self)))
+
+
     
 
     @property

@@ -28,7 +28,6 @@ class QgraphicsNode(QGraphicsItem):
         self.initTitle()
         self.title = self.node.title
 
-        self.init_sockets()
         self.initcontent()
 
 
@@ -120,10 +119,6 @@ class QgraphicsNode(QGraphicsItem):
         # self.content.setGeometry(*self.to_int(self.edge_size, self.title_height + self.edge_size,
         #                           self.width - 2*self.edge_size, self.height - 2*self.edge_size-self.title_height))
         self.grContent.setWidget(self.content)
-
-    def init_sockets(self):
-        pass
-
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         # title

@@ -20,12 +20,17 @@ class QDragListbox(QListWidget):
 
 
     def addMyItems(self):
-        self.addMyItem("Input", "icons/unit_mat.png", OP_NODE_INPUT)
-        self.addMyItem("Output", "icons/output.png", OP_NODE_OUTPUT)
-        self.addMyItem("Add", "icons/add_mat.png", OP_NODE_ADD)
-        self.addMyItem("MatMul", "icons/mat_mul.png", OP_NODE_MATMUL)
-        self.addMyItem("Transpose", "icons/mat_transpose.png", OP_NODE_TRANSPOSE)
-        self.addMyItem("Scalar", "icons/scalar_num.png", OP_NODE_SCALAR)
+        # self.addMyItem("Input", "icons/unit_mat.png", OP_NODE_INPUT)
+        # self.addMyItem("Output", "icons/output.png", OP_NODE_OUTPUT)
+        # self.addMyItem("Add", "icons/add_mat.png", OP_NODE_ADD)
+        # self.addMyItem("MatMul", "icons/mat_mul.png", OP_NODE_MATMUL)
+        # self.addMyItem("Transpose", "icons/mat_transpose.png", OP_NODE_TRANSPOSE)
+        # self.addMyItem("Scalar", "icons/scalar_num.png", OP_NODE_SCALAR)
+        keys = list(MLNODE_NODES.keys())
+        keys.sort()
+        for key in keys:
+            node = get_class_from_opcode(key)
+            self.addMyItem(node.op_title, node.icon, key)
 
     def addMyItem(self, name, icon=None, op_code=0):
         item = QListWidgetItem(name, self) # can be (icon, text, parent, <int>type)
@@ -40,7 +45,6 @@ class QDragListbox(QListWidget):
         item.setData(Qt.UserRole + 1, op_code)
 
     def startDrag(self, *args, **kwargs):
-        # print("ListBox::startDrag")
 
         try:
             item = self.currentItem()

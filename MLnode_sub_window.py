@@ -60,6 +60,7 @@ class mlnode_sub_window(node_editor_widget):
             try:
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())
+                self.scene.history.store_history(f'Created new node <{node.__class__.__name__}>')
             except Exception as e: print(e)
             # self.scene.add_node(node)
 

@@ -21,7 +21,7 @@ class MLnodeWindow(node_editor_window):
         self.empty_icon = QIcon(".")
         if DEBUG:
             print("Registered nodes:")
-            pp(CALC_NODES)
+            pp(MLNODE_NODES)
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)

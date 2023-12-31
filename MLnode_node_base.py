@@ -17,17 +17,19 @@ class MLnode_content(QNode_content_widget):
         lbl.setObjectName(self.node.content_label_objname)
 
 class MLnode_node(Node):
-    def __init__(self, scene, op_code, op_title, content_label="", content_label_objname="calc_node_bg", inputs=None, outputs=None) -> None:
+    icon = ""
+    op_code = 0
+    op_title = "Undefined"
+    content_label = ""
+    content_label_objname = "mlnode_node_bg"
+
+    def __init__(self, scene, inputs=None, outputs=None) -> None:
         if inputs is None:
             inputs = [2,2]
         if outputs is None:
             outputs = [1]
-        self.op_code = op_code
-        self.op_title = op_title
-        self.content_label = content_label
-        self.content_label_objname = content_label_objname
 
-        super().__init__(scene, self.op_title, inputs, outputs)
+        super().__init__(scene, self.__class__.op_title, inputs, outputs)
 
     def initInnerClasses(self):
         self.content = MLnode_content(self)

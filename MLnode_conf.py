@@ -8,7 +8,7 @@ OP_NODE_TRANSPOSE = 5
 OP_NODE_SCALAR = 6
 
 
-CALC_NODES = {
+MLNODE_NODES = {
 }
 
 
@@ -18,11 +18,11 @@ class OpCodeNotRegistered(ConfException): pass
 
 
 def register_node_now(op_code, class_reference):
-    if op_code in CALC_NODES:
+    if op_code in MLNODE_NODES:
         raise InvalidNodeRegistration("Duplicite node registration of '%s'. There is already %s" %(
-            op_code, CALC_NODES[op_code]
+            op_code, MLNODE_NODES[op_code]
         ))
-    CALC_NODES[op_code] = class_reference
+    MLNODE_NODES[op_code] = class_reference
 
 
 def register_node(op_code):
@@ -32,5 +32,5 @@ def register_node(op_code):
     return decorator
 
 def get_class_from_opcode(op_code):
-    if op_code not in CALC_NODES: raise OpCodeNotRegistered("OpCode '%d' is not registered" % op_code)
-    return CALC_NODES[op_code]
+    if op_code not in MLNODE_NODES: raise OpCodeNotRegistered("OpCode '%d' is not registered" % op_code)
+    return MLNODE_NODES[op_code]

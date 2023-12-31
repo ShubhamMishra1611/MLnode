@@ -2,6 +2,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from MLnode_conf import *
+from utility import print_traceback
 
 
 
@@ -20,12 +21,6 @@ class QDragListbox(QListWidget):
 
 
     def addMyItems(self):
-        # self.addMyItem("Input", "icons/unit_mat.png", OP_NODE_INPUT)
-        # self.addMyItem("Output", "icons/output.png", OP_NODE_OUTPUT)
-        # self.addMyItem("Add", "icons/add_mat.png", OP_NODE_ADD)
-        # self.addMyItem("MatMul", "icons/mat_mul.png", OP_NODE_MATMUL)
-        # self.addMyItem("Transpose", "icons/mat_transpose.png", OP_NODE_TRANSPOSE)
-        # self.addMyItem("Scalar", "icons/scalar_num.png", OP_NODE_SCALAR)
         keys = list(MLNODE_NODES.keys())
         keys.sort()
         for key in keys:
@@ -69,5 +64,5 @@ class QDragListbox(QListWidget):
 
             drag.exec_(Qt.MoveAction)
 
-        except Exception as e: print(e)
+        except Exception as e: print_traceback(e)
 

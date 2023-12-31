@@ -3,7 +3,7 @@ from collections import OrderedDict
 from node_serializable import Serializable
 from node_graphics import QgraphicsNode
 from node_content_widget import QNode_content_widget
-from node_socket import Socket, LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP
+from node_socket import Socket, LEFT_BOTTOM, LEFT_TOP, RIGHT_BOTTOM, RIGHT_TOP, LEFT_CENTER, RIGHT_CENTER
 DEBUG = False
 class Node(Serializable):
     def __init__(self, scene, title="Undefined Node", inputs = [], outputs = []) -> None:
@@ -25,17 +25,6 @@ class Node(Serializable):
         self.inputs = []
         self.outputs = []
         self.initSockets(inputs, outputs)
-        # counter = 0
-
-        # for item in inputs:
-        #     socket = Socket(node=self, index=counter, position=LEFT_BOTTOM,socket_type = item, multi_edges=False)
-        #     counter+=1
-        #     self.inputs.append(socket)
-        # counter = 0
-        # for item in outputs:
-        #     socket = Socket(node=self, index=counter, position=RIGHT_TOP,socket_type = item, multi_edges=True)
-        #     counter+=1
-        #     self.outputs.append(socket)
 
     def __str__(self) -> str:
         return "<Node %s>" % (hex(id(self)))
@@ -67,12 +56,16 @@ class Node(Serializable):
         counter = 0
 
         for item in inputs:
-            socket = Socket(node=self, index=counter, position=self.input_socket_position,socket_type = item, multi_edges=self.input_multi_edged)
+            socket = Socket(node=self, index=counter, position=self.input_socket_position,
+                            socket_type = item, multi_edges=self.input_multi_edged, 
+                            count_on_this_node_side=len(inputs), is_input=True)
             counter+=1
             self.inputs.append(socket)
         counter = 0
         for item in outputs:
-            socket = Socket(node=self, index=counter, position=self.output_socket_position,socket_type = item, multi_edges=self.output_multi_edged)
+            socket = Socket(node=self, index=counter, position=self.output_socket_position,
+                            socket_type = item, multi_edges=self.output_multi_edged, 
+                            count_on_this_node_side=len(outputs), is_input=False)
             counter+=1
             self.outputs.append(socket)
 
@@ -94,12 +87,27 @@ class Node(Serializable):
         self.graphical_node.title = self._title
     
     
-    def get_socket_position(self, index, position):
-        x = 0 if position in [LEFT_TOP, LEFT_BOTTOM] else self.graphical_node.width
+    def get_socket_position(self, index, position, num_out_of=1):
+        x = 0 if position in [LEFT_TOP,LEFT_CENTER,  LEFT_BOTTOM] else self.graphical_node.width
         if position in [LEFT_BOTTOM, RIGHT_BOTTOM]:
-            y=self.graphical_node.height - self.graphical_node.edge_size - self.graphical_node._padding - index*self.socket_spacing
+            y=self.graphical_node.height - self.graphical_node.edge_roundness - self.graphical_node.title_vertical_padding - index*self.socket_spacing
+        elif position in (LEFT_CENTER, RIGHT_CENTER):
+            num_sockets = num_out_of
+            node_height = self.graphical_node.height
+            top_offset = self.graphical_node.title_height + 2 * self.graphical_node.title_vertical_padding + self.graphical_node.edge_padding
+            available_height = node_height - top_offset
+
+            total_height_of_all_sockets = num_sockets * self.socket_spacing
+            new_top = available_height - total_height_of_all_sockets
+
+            y = top_offset + available_height/2.0 + (index-0.5)*self.socket_spacing
+            if num_sockets > 1:
+                y -= self.socket_spacing * (num_sockets-1)/2
+
+        elif position in (LEFT_TOP, RIGHT_TOP):
+            y = self.graphical_node.title_height + self.graphical_node.title_vertical_padding + index*self.socket_spacing
         else:
-            y = self.graphical_node.title_height + self.graphical_node.edge_size + self.graphical_node._padding + index*self.socket_spacing
+            y = 0
         return [x, y]
     
     def update_connected_edges(self):
@@ -150,18 +158,21 @@ class Node(Serializable):
 
         data['inputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
         data['outputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
+        num_inputs = len( data['inputs'] )
+        num_outputs = len( data['outputs'] )
+
 
         self.inputs = []
         print(data['inputs'])
         for socket_data in data['inputs']:
             new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                socket_type=socket_data['socket_type'])
+                                socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs, is_input=True)
             new_socket.deserialize(socket_data, hashmap)
             self.inputs.append(new_socket)
         self.outputs = []
         for socket_data in data['outputs']:
             new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                socket_type=socket_data['socket_type'])
+                                socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs, is_input=False)
             new_socket.deserialize(socket_data, hashmap)
             self.outputs.append(new_socket)
         

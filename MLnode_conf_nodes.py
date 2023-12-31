@@ -36,6 +36,9 @@ class MLNode_Scalar(MLnode_node):
     op_title = "Scalar"
     content_label = "1"
     content_label_objname = "mlnode_node_scalar"
+    
+    def __init__(self, scene):
+        super().__init__(scene, inputs=[1], outputs=[1])
 
 class MLnode_input_content(QNode_content_widget):
     def initUI(self):

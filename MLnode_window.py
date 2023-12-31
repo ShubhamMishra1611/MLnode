@@ -9,6 +9,7 @@ from MLnode_listbox_drag import QDragListbox
 from MLnode_conf import *
 from MLnode_conf_nodes import *
 from pprint import pprint as pp 
+from utility import print_traceback
 
 DEBUG = True
 
@@ -80,7 +81,7 @@ class MLnodeWindow(node_editor_window):
             subwindow = self.create_mdi_child()
             subwindow.widget().fileNew()
             subwindow.show()
-        except Exception as e: print(e)
+        except Exception as e: print_traceback(e)
 
     
     def on_file_open(self):
@@ -101,7 +102,7 @@ class MLnodeWindow(node_editor_window):
                             subwindow.show()
                         else:
                             node_editor.close()
-        except Exception as e: print(e)
+        except Exception as e: print_traceback(e)
                 
 
     
@@ -245,7 +246,7 @@ class MLnodeWindow(node_editor_window):
 
             self.actUndo.setEnabled(hasMdiChild and active.canUndo())
             self.actRedo.setEnabled(hasMdiChild and active.canRedo())
-        except Exception as e: print(e)
+        except Exception as e: print_traceback(e)
 
 
     

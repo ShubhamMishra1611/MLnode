@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget
 from node_editor_widget import node_editor_widget
 from MLnode_conf import *
 from MLnode_node_base import *
+from utility import print_traceback
 
 
 class mlnode_sub_window(node_editor_widget):
@@ -61,7 +62,7 @@ class mlnode_sub_window(node_editor_widget):
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())
                 self.scene.history.store_history(f'Created new node <{node.__class__.__name__}>')
-            except Exception as e: print(e)
+            except Exception as e: print_traceback(e)
             # self.scene.add_node(node)
 
 

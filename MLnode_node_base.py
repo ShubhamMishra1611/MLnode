@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from node_node import Node
 from node_content_widget import QNode_content_widget
 from node_graphics import QgraphicsNode
@@ -9,12 +11,31 @@ class MLnode_graphicNode(QgraphicsNode):
         super().initSizes()
         self.width = 160
         self.height = 74
-        # self.edge_size = 5
-        # self._padding = 8
         self.edge_roundness = 6
         self.edge_padding = 0
         self.title_horizontal_padding = 8
         self.title_vertical_padding = 10
+
+    def initAssets(self):
+        super().initAssets()
+        self.icons = QImage("icons/status_icons.png")
+
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        super().paint(painter, QStyleOptionGraphicsItem, widget)
+
+        offset = 24.0
+        if self.node.isDirty(): offset = 0.0
+        if self.node.isInvalid(): offset = 48.0
+        if self.node.isGrad(): 
+            self.icons = QImage('icons\grad.png')
+            offset = 0.0
+
+        painter.drawImage(
+            QRectF(-10, -10, 24.0, 24.0),
+            self.icons,
+            QRectF(offset, 0, 24.0, 24.0)
+        )
+
 
 class MLnode_content(QNode_content_widget):
     def initUI(self):

@@ -114,13 +114,11 @@ class mlnode_sub_window(node_editor_widget):
         context_menu = QMenu(self)
         evalAct = context_menu.addAction("Eval")
         markrequires_grad = context_menu.addAction("Mark requires_grad")
+        markis_float = context_menu.addAction("Mark is_float")
         deviceMenu = context_menu.addMenu("Select Device")
         cpuAct = deviceMenu.addAction("CPU")
         gpuAct = deviceMenu.addAction("GPU")
-        otherAct = deviceMenu.addAction("Other")
-        unmarkInvalidAct = context_menu.addAction("Mark: Do not consider")
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
-        print(action)
 
         selected = None
         item = self.scene.getItemAt(event.pos())
@@ -134,6 +132,13 @@ class mlnode_sub_window(node_editor_widget):
 
         if DEBUG_CONTEXT: print("got item:", selected)
         # todo
+        if selected and action == evalAct: selected.markDirty()
+        if selected and action == markrequires_grad: selected.markGrad()
+        if selected and action == markis_float: selected.markInvalid()
+        if selected and action == evalAct:
+            val = selected.eval()
+            if DEBUG_CONTEXT: print("EVALUATED:", val)
+
 
     def handleEdgeContextMenu(self, event):
         if DEBUG_CONTEXT: print("CONTEXT: EDGE")

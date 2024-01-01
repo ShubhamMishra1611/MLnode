@@ -18,6 +18,12 @@ class Edge(Serializable):
 
         self.scene.add_edge(self)
 
+    def __str__(self) -> str:
+        return "<Edge %s>" % (hex(id(self)))
+    
+    def getOtherSocket(self, known_socket):
+        return self.start_socket if known_socket == self.end_socket else self.end_socket
+
     @property
     def start_socket(self):return self._start_socket
 
@@ -44,6 +50,7 @@ class Edge(Serializable):
         self._end_socket = value
         if self.end_socket is not None:
             self.end_socket.add_edge(self)
+    
 
     @property
     def edge_type(self): return self._edge_type
@@ -65,8 +72,6 @@ class Edge(Serializable):
 
         if self.start_socket is not None:
             self.update_positions()
-    def __str__(self) -> str:
-        return "<Edge %s>" % (hex(id(self)))
 
 
     def update_positions(self):

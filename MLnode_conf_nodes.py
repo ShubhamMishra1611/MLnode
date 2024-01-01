@@ -1,6 +1,7 @@
 from MLnode_conf import *
 from MLnode_node_base import *
 from PyQt5.QtCore import *
+from utility import print_traceback
 
 @register_node(OP_NODE_ADD)
 class MLNode_Add(MLnode_node):
@@ -43,8 +44,23 @@ class MLNode_Scalar(MLnode_node):
 class MLnode_input_content(QNode_content_widget):
     def initUI(self):
         self.edit = QLineEdit("0", self)
-        self.edit.setAlignment(Qt.AlignCenter)
+        self.edit.setAlignment(Qt.AlignRight)
         self.edit.setObjectName(self.node.content_label_objname)
+    
+    def serialize(self):
+        res = super().serialize()
+        res['value'] = self.edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['value']
+            self.edit.setText(value)
+            return True & res
+        except Exception as e:print_traceback(e)
+        return res
+
 
 @register_node(OP_NODE_INPUT)
 class MLnode_Input(MLnode_node):
@@ -63,14 +79,14 @@ class MLnode_Input(MLnode_node):
 
 class MLnode_output_content(QNode_content_widget):
     def initUI(self):
-        self.edit = QLineEdit("42", self)
-        self.edit.setAlignment(Qt.AlignCenter)
+        self.edit = QLabel("42", self)
+        self.edit.setAlignment(Qt.AlignLeft)
         self.edit.setObjectName(self.node.content_label_objname)
 
 @register_node(OP_NODE_OUTPUT)
 class MLNode_Output(MLnode_node):
     icon = "icons/tensoroutput.png"
-    op_code = OP_NODE_INPUT
+    op_code = OP_NODE_OUTPUT
     op_title = "Output Tensor"
     content_label_objname = "mlnode_node_output"
 

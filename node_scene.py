@@ -18,9 +18,12 @@ class scene(Serializable):
         self.width, self.height = 16000, 16000
         self._has_been_modified = False
         self._last_selected_items = []
+        
         self._has_been_modified_listeners = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
+
+        self.node_class_selector = None
 
 
 
@@ -124,6 +127,14 @@ class scene(Serializable):
                 raise InvalidFile(f'{file} is not a valid json file')
             except Exception as e:
                 print(e)
+
+    def setNodeClassSelector(self, class_selecting_function):
+        """ When the function self.node_class_selector is set, we can use different Node Classes """
+        self.node_class_selector = class_selecting_function
+
+    def getNodeClassFromData(self, data):
+        return Node if self.node_class_selector is None else self.node_class_selector(data)
+
             
 
     def getSelectedItems(self):
@@ -145,17 +156,18 @@ class scene(Serializable):
             ('edges', edges),
         ])
 
-    def deserialize(self, data, hashmap={}):
-        print("deserializating data", data)
+    def deserialize(self, data, hashmap={}, restore_id = True):
         self.clear()
 
         hashmap = {}
 
+        if restore_id: self.id = data['id']
+
         for node_data in data['nodes']:
-            Node(self).deserialize(node_data, hashmap)
+            self.getNodeClassFromData(node_data)(self).deserialize(node_data, hashmap, restore_id)
         
         for edge_data in data['edges']:
-            Edge(self).deserialize(edge_data, hashmap)
+            Edge(self).deserialize(edge_data, hashmap, restore_id)
 
         
         return True 

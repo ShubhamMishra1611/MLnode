@@ -32,7 +32,7 @@ class QNode_content_widget(QWidget, Serializable):
         ])
 
     def deserialize(self, data, hashmap={}):
-        return False
+        return True
 
 
 class Q_TextEdit(QTextEdit):

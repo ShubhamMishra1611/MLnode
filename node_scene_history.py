@@ -1,4 +1,5 @@
 from node_graphics_edge import Qgraphics_edge
+from pprint import pprint
 
 DEBUG = False
 
@@ -69,6 +70,7 @@ class scene_history:
             'snapshot': self.scene.serialize(),
             'selection': sel_obj
         }
+        pprint(history_stamp)
         return history_stamp
     
     def storeInitialHistoryStamp(self):
@@ -84,7 +86,6 @@ class scene_history:
     def restore_history_stamp(self, history_stamp):
         if DEBUG: print(f'RHS: ', history_stamp)
 
-        # self.scene.deserialize(history_stamp['snapshot'])
         try:
             self.scene.deserialize(history_stamp['snapshot'])
 
@@ -101,6 +102,8 @@ class scene_history:
                         break
 
         except Exception as e:
+            from utility import print_traceback
+            print_traceback(e)
             print("Error restoring history stamp", e)
             # traceback.print_exc()
             return False

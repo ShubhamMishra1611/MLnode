@@ -150,31 +150,37 @@ class Node(Serializable):
             ('content', self.content.serialize()),
         ])
 
-    def deserialize(self, data, hashmap={}):
-        self.id = data['id']
-        hashmap[data['id']] = self
-        self.setPos(data['pos_x'], data['pos_y'])
-        self.title = data['title']
+    def deserialize(self, data, hashmap={}, restore_id = True):
+        try:
+            if restore_id: self.id = data['id']
+            hashmap[data['id']] = self
+            self.setPos(data['pos_x'], data['pos_y'])
+            self.title = data['title']
 
-        data['inputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
-        data['outputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
-        num_inputs = len( data['inputs'] )
-        num_outputs = len( data['outputs'] )
+            data['inputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
+            data['outputs'].sort(key = lambda socket: socket['index']+socket['position']*10000)
+            num_inputs = len( data['inputs'] )
+            num_outputs = len( data['outputs'] )
 
 
-        self.inputs = []
-        print(data['inputs'])
-        for socket_data in data['inputs']:
-            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs, is_input=True)
-            new_socket.deserialize(socket_data, hashmap)
-            self.inputs.append(new_socket)
-        self.outputs = []
-        for socket_data in data['outputs']:
-            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs, is_input=False)
-            new_socket.deserialize(socket_data, hashmap)
-            self.outputs.append(new_socket)
+            self.inputs = []
+            for socket_data in data['inputs']:
+                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
+                                    socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs, is_input=True)
+                new_socket.deserialize(socket_data, hashmap, restore_id)
+                self.inputs.append(new_socket)
+            self.outputs = []
+            for socket_data in data['outputs']:
+                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
+                                    socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs, is_input=False)
+                new_socket.deserialize(socket_data, hashmap, restore_id)
+                self.outputs.append(new_socket)
+        except Exception as e: 
+            from utility import print_traceback
+            print_traceback(e)
+        res = self.content.deserialize(data['content'], hashmap)
         
-        return True
+        # return True
+        return True & res
+    
 

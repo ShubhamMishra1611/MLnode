@@ -15,9 +15,15 @@ class mlnode_sub_window(node_editor_widget):
 
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
+        self.scene.setNodeClassSelector(self.getNodeClassFromData)
 
 
         self._close_event_listeners = []
+
+    def getNodeClassFromData(self, data):
+        if 'op_code' not in data: return Node
+        return get_class_from_opcode(data['op_code'])
+
 
 
     def setTitle(self):
@@ -30,17 +36,12 @@ class mlnode_sub_window(node_editor_widget):
         for callback in self._close_event_listeners: callback(self, event)
 
     def onDragEnter(self, event):
-        # print("CalcSubWnd :: ~onDragEnter")
-        # print("text: '%s'" % event.mimeData().text())
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             event.acceptProposedAction()
         else:
-            # print(" ... denied drag enter event")
             event.setAccepted(False)
 
     def onDrop(self, event):
-        # print("CalcSubWnd :: ~onDrop")
-        # print("text: '%s'" % event.mimeData().text())
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             eventData = event.mimeData().data(LISTBOX_MIMETYPE)
             dataStream = QDataStream(eventData, QIODevice.ReadOnly)
@@ -56,8 +57,6 @@ class mlnode_sub_window(node_editor_widget):
 
 
             # @TODO Fix me!
-            # node = MLnode_node(self.scene, text, inputs=[1,1], outputs=[2])
-            # node = MLnode_node(self.scene, op_code, text, inputs=[1,1], outputs=[2])
             try:
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())

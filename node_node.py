@@ -29,6 +29,7 @@ class Node(Serializable):
         self._is_dirty = False
         self._is_invalid = False
         self._is_grad = False
+        self._device = 'CPU'
 
 
     def __str__(self) -> str:
@@ -36,6 +37,10 @@ class Node(Serializable):
     
     # node evaluation stuff
 
+    def change_device_to(self, device='CPU'):
+        self._device = device
+    def get_device_type(self):
+        return self._device
     def isGrad(self):
         return self._is_grad
     

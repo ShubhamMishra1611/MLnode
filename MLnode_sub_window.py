@@ -139,6 +139,11 @@ class mlnode_sub_window(node_editor_widget):
             val = selected.eval()
             if DEBUG_CONTEXT: print("EVALUATED:", val)
 
+        if selected and action == cpuAct:
+            selected.change_device_to("CPU")
+        if selected and action == gpuAct:
+            selected.change_device_to("GPU")
+
 
     def handleEdgeContextMenu(self, event):
         if DEBUG_CONTEXT: print("CONTEXT: EDGE")

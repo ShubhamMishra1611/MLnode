@@ -29,6 +29,10 @@ class MLnode_graphicNode(QgraphicsNode):
         if self.node.isGrad(): 
             self.icons = QImage('icons\grad.png')
             offset = 0.0
+        if self.node.get_device_type() == 'GPU':
+            self.icons = QImage('icons\GPU.png')
+            offset = 0.0
+
 
         painter.drawImage(
             QRectF(-10, -10, 24.0, 24.0),

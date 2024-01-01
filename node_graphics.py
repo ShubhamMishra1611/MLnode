@@ -106,18 +106,12 @@ class QgraphicsNode(QGraphicsItem):
         self.title_item = QGraphicsTextItem(self)
         self.title_item.setDefaultTextColor(self._title_color)
         self.title_item.setFont(self._title_font)
-        # self.title_item.setPos(self._padding, 0)
         self.title_item.setPos(self.title_horizontal_padding, 0)
         self.title_item.setTextWidth(
             self.width
             - 2 * self.title_horizontal_padding
         )
 
-    def to_int(*args):
-        arguments = list(args)
-        for x in args:
-            arguments.append(int(x) if type(x) is int else x)
-        return arguments
     def initcontent(self):
         self.grContent = QGraphicsProxyWidget(self)
         self.content.setGeometry(int(self.edge_padding), int(self.title_height + self.edge_padding),

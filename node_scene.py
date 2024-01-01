@@ -81,10 +81,12 @@ class scene(Serializable):
         self._items_deselected_listeners.append(callback)
 
     def addDragEnterListener(self, callback):
-        self.grscene.views()[0].addDragEnterListener(callback)
+        # self.grscene.views()[0].addDragEnterListener(callback)
+        self.getView().addDragEnterListener(callback)
 
     def addDropListener(self, callback):
-        self.grscene.views()[0].addDropListener(callback)
+        # self.grscene.views()[0].addDropListener(callback)
+        self.getView().addDropListener(callback)
 
 
     def resetLastSelectedStates(self):
@@ -139,6 +141,13 @@ class scene(Serializable):
 
     def getSelectedItems(self):
         return self.grscene.selectedItems()
+    
+    def getView(self):
+        return self.grscene.views()[0]
+
+    def getItemAt(self, pos):
+        return self.getView().itemAt(pos)
+
 
     
     def clear(self):

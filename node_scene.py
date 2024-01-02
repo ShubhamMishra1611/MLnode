@@ -81,11 +81,9 @@ class scene(Serializable):
         self._items_deselected_listeners.append(callback)
 
     def addDragEnterListener(self, callback):
-        # self.grscene.views()[0].addDragEnterListener(callback)
         self.getView().addDragEnterListener(callback)
 
     def addDropListener(self, callback):
-        # self.grscene.views()[0].addDropListener(callback)
         self.getView().addDropListener(callback)
 
 
@@ -103,7 +101,6 @@ class scene(Serializable):
         self.edges.append(edge)
 
     def remove_node(self, node):
-        # self.nodes.remove(node)
         if node in self.nodes: self.nodes.remove(node)
         else: print("!W:", "Scene::removeNode", "wanna remove node", node, "from self.nodes but it's not in the list!")
 

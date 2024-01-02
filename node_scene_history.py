@@ -93,7 +93,7 @@ class scene_history:
             for edge_id in history_stamp['selection']['edges']:
                 for edge in self.scene.edges:
                     if edge.id == edge_id:
-                        edge.grEdge.setSelected(True)
+                        edge.graphical_edge.setSelected(True)
                         break
             for node_id in history_stamp['selection']['nodes']:
                 for node in self.scene.nodes:
@@ -105,5 +105,4 @@ class scene_history:
             from utility import print_traceback
             print_traceback(e)
             print("Error restoring history stamp", e)
-            # traceback.print_exc()
             return False

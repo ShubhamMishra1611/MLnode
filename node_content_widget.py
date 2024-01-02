@@ -23,7 +23,6 @@ class QNode_content_widget(QWidget, Serializable):
         self.layout.addWidget(Q_TextEdit("Scibdi duph"))
 
     def setEditingFlag(self, value):
-        # self.node.scene.grscene.views()[0].editing_flag = value
         self.node.scene.getView().editingFlag = value
 
     def serialize(self):

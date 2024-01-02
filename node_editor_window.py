@@ -112,7 +112,6 @@ class node_editor_window(QMainWindow):
 
     def on_delete(self):
         if self.get_current_node_editor_widget():
-            # self.get_current_node_editor_widget().scene.grscene.views()[0].delete_selected()
             self.get_current_node_editor_widget().scene.getView().delete_selected()
         
 

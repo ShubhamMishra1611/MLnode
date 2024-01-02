@@ -188,7 +188,6 @@ class Node_Editor_Graphics_View(QGraphicsView):
             self.mode = MODE_NOOP
             return
         
-        # if self.dragMode() == QGraphicsView.RubberBandDrag:
         if self.rubber_band_dragging_rectangle:
             self.rubber_band_dragging_rectangle = False
             self.scene.scene.history.store_history("selection changed")
@@ -248,10 +247,6 @@ class Node_Editor_Graphics_View(QGraphicsView):
     def edge_drag_start(self, item):
         if DEBUG: print('View::edge_drag_start ~ start dragging edge')
         if DEBUG: print('View::edge_drag_start ~    assign start socket')
-        # self.previous_edge = item.socket.edge
-        # self.last_start_socket = item.socket
-        # self.drag_edge = Edge(self.scene.scene, item.socket, None, EDGE_BEZIER)
-        # if DEBUG: print('View::edge_drag_start ~ ', self.drag_edge)
         self.drag_start_socket = item.socket
         self.drag_edge = Edge(self.scene.scene, item.socket, None, EDGE_BEZIER)
         if DEBUG: print('View::edgeDragStart ~   dragEdge:', self.drag_edge)
@@ -294,12 +289,6 @@ class Node_Editor_Graphics_View(QGraphicsView):
 
                 self.scene.scene.history.store_history("created new edge by dragging")
                 return True
-        # if DEBUG:print('View::edge_drag_end ~ End of dragging edge')
-        # self.drag_edge.remove()
-        # self.drag_edge = None
-        # if DEBUG:print('View::edge_drag_end ~ about to set socket to previous edge', self.previous_edge)
-        # if self.previous_edge is not None:
-        #     self.previous_edge.start_socket.edge = self.previous_edge
         if DEBUG:print('View::edge_drag_end ~ Everything done')
         
         return False

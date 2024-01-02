@@ -190,8 +190,6 @@ class Node(Serializable):
     
     def update_connected_edges(self):
         for socket in self.inputs + self.outputs:
-            # if socket.has_edge():
-            #     socket.edge.update_positions()
             for edge in socket.edges:
                 edge.update_positions()
 
@@ -200,9 +198,6 @@ class Node(Serializable):
         if DEBUG: print('> Removing node ', self)
         if DEBUG: print('removing all edges from the socket')
         for socket in (self.inputs + self.outputs):
-            # if socket.has_edge():
-            #     if DEBUG: print(' ---- removing socket:', socket, 'edge ', socket.edge)
-            #     socket.edge.remove()
             for edge in socket.edges:
                 if DEBUG: print("    - removing from socket:", socket, "edge:", edge)
                 edge.remove()
@@ -258,7 +253,6 @@ class Node(Serializable):
             print_traceback(e)
         res = self.content.deserialize(data['content'], hashmap)
         
-        # return True
         return True & res
     
 

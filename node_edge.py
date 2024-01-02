@@ -90,11 +90,6 @@ class Edge(Serializable):
 
 
     def remove_from_socket(self):
-        # if self.start_socket is not None:
-        #     self.start_socket.edge = None
-        # if self.end_socket is not None:
-        #     self.end_socket.edge = None
-
         self.end_socket = None
         self.start_socket = None
 

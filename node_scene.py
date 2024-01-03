@@ -114,7 +114,7 @@ class scene(Serializable):
     def saveToFile(self, filename):
         with open(filename, "w") as file:
             file.write( json.dumps( self.serialize(), indent=4 ) )
-        print(f'saving to  {filename} was successfull.')
+        # print(f'saving to  {filename} was successfull.')
 
     def loadFromFile(self, filename):
         with open(filename, "r") as file:

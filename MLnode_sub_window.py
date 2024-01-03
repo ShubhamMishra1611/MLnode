@@ -74,7 +74,7 @@ class mlnode_sub_window(node_editor_widget):
             mouse_position = event.pos()
             scene_position = self.scene.grscene.views()[0].mapToScene(mouse_position)
 
-            print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
+            # print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
 
 
             # @TODO Fix me!
@@ -182,6 +182,6 @@ class mlnode_sub_window(node_editor_widget):
             new_calc_node = get_class_from_opcode(action.data())(self.scene)
             scene_pos = self.scene.getView().mapToScene(event.pos())
             new_calc_node.setPos(scene_pos.x(), scene_pos.y())
-            print("Selected node:", new_calc_node)
+            # print("Selected node:", new_calc_node)
 
 

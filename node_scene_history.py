@@ -70,7 +70,7 @@ class scene_history:
             'snapshot': self.scene.serialize(),
             'selection': sel_obj
         }
-        pprint(history_stamp)
+        # pprint(history_stamp)
         return history_stamp
     
     def storeInitialHistoryStamp(self):

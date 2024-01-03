@@ -32,6 +32,14 @@ class Node(Serializable):
         self._device = 'CPU'
 
 
+    def onEdgeConnectionChanged(self, new_edge):
+        print(f'{self.__class__.__name__}::onEdgeConnectionChanged called for {new_edge}')
+    
+    def onInputChanged(self, new_edge):
+        print(f'{self.__class__.__name__}::onInputChanged called for {new_edge}')
+        self.markDirty()
+        self.markDescendantsDirty()
+    
     def __str__(self) -> str:
         return "<Node %s>" % (hex(id(self)))
     

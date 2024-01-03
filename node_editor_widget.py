@@ -77,7 +77,7 @@ class node_editor_widget(QWidget):
 
 
     def loadStylesheet(self, filename):
-        print('STYLE loading:', filename)
+        # print('STYLE loading:', filename)
         file = QFile(filename)
         file.open(QFile.ReadOnly | QFile.Text)
         stylesheet = file.readAll()
@@ -98,7 +98,7 @@ class node_editor_widget(QWidget):
             self.file_name = file_name
             return True
         except InvalidFile as e:
-            print(e)
+            # print(e)
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, f'Error in loading the file {file_name} --- {e}', 'Error '*20, QMessageBox.Ok)
             return False

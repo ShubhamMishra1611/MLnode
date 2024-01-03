@@ -11,7 +11,7 @@ from MLnode_conf import *
 from pprint import pprint as pp 
 from utility import print_traceback
 
-DEBUG = True
+DEBUG = False
 
 class MLnodeWindow(node_editor_window):
 

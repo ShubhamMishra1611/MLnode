@@ -5,6 +5,7 @@ from node_node import Node
 from node_content_widget import QNode_content_widget
 from node_graphics import QgraphicsNode
 from node_socket import LEFT_CENTER, RIGHT_CENTER
+from utility import print_traceback
 
 class MLnode_graphicNode(QgraphicsNode):
     def initSizes(self):
@@ -60,6 +61,29 @@ class MLnode_node(Node):
             outputs = [1]
 
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
+        self.value = None
+        self.markDirty()
+
+    def evalImplementation(self):
+        return 123
+    
+    def eval(self):
+        if not self.isDirty() and not self.isInvalid():
+            print(f'_> returning cache {self.__class__.__name__} value as {self.value}')
+            return self.value
+        try:
+            val = self.evalImplementation()
+            self.markDirty(False)
+            self.markInvalid(False)
+            return val
+        except Exception as e:
+            self.markInvalid()
+            print_traceback(e)
+    
+    def onInputChanged(self, new_edge):
+        print(f'onInputChanged')
+        self.markDirty()
+        self.eval()
 
     def initInnerClasses(self):
         self.content = MLnode_content(self)
@@ -77,7 +101,7 @@ class MLnode_node(Node):
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
-        print("Deserialized CalcNode '%s'" % self.__class__.__name__, "res:", res)
+        # print("Deserialized CalcNode '%s'" % self.__class__.__name__, "res:", res)
         return res
 
 

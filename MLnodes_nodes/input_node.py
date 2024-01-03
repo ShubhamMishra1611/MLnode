@@ -33,9 +33,11 @@ class MLnode_Input(MLnode_node):
 
     def __init__(self, scene):
         super().__init__(scene, inputs=[], outputs=[3])
+        self.eval()
 
     def initInnerClasses(self):
         self.content = MLnode_input_content(self)
         self.graphical_node = MLnode_graphicNode(self)
+        self.content.edit.textChanged.connect(self.onInputChanged)
 
 

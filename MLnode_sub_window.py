@@ -118,6 +118,10 @@ class mlnode_sub_window(node_editor_widget):
         deviceMenu = context_menu.addMenu("Select Device")
         cpuAct = deviceMenu.addAction("CPU")
         gpuAct = deviceMenu.addAction("GPU")
+        markDirtyAct = context_menu.addAction("Mark Dirty")
+        markDirtyDescendantsAct = context_menu.addAction("Mark Descendant Dirty")
+        markInvalidAct = context_menu.addAction("Mark Invalid")
+        unmarkInvalidAct = context_menu.addAction("Unmark Invalid")
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
 
         selected = None
@@ -135,6 +139,14 @@ class mlnode_sub_window(node_editor_widget):
         if selected and action == evalAct: selected.markDirty()
         if selected and action == markrequires_grad: selected.markGrad()
         if selected and action == markis_float: selected.markInvalid()
+        if selected and action == markDirtyAct: selected.markDirty()
+        if selected and action == markDirtyDescendantsAct: selected.markDescendantsDirty()
+        if selected and action == markInvalidAct: selected.markInvalid()
+        if selected and action == unmarkInvalidAct: selected.markInvalid(False)
+        if selected and action == evalAct:
+            val = selected.eval()
+            if DEBUG_CONTEXT: print("EVALUATED:", val)
+
         if selected and action == evalAct:
             val = selected.eval()
             if DEBUG_CONTEXT: print("EVALUATED:", val)

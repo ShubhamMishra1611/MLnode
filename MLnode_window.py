@@ -7,7 +7,7 @@ from node_editor_window import node_editor_window
 from MLnode_sub_window import mlnode_sub_window
 from MLnode_listbox_drag import QDragListbox
 from MLnode_conf import *
-from MLnode_conf_nodes import *
+# from MLnode_conf_nodes import *
 from pprint import pprint as pp 
 from utility import print_traceback
 

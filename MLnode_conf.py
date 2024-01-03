@@ -34,3 +34,6 @@ def register_node(op_code):
 def get_class_from_opcode(op_code):
     if op_code not in MLNODE_NODES: raise OpCodeNotRegistered("OpCode '%d' is not registered" % op_code)
     return MLNODE_NODES[op_code]
+
+
+from MLnodes_nodes import *

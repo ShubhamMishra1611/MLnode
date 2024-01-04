@@ -1,5 +1,6 @@
 # Adding a New Node
 
+
 Follow these steps to add a new node:
 
 1. **Register the Node**: Register the new node and its opcode in the [`MLnode_conf.py`](https://github.com/ShubhamMishra1611/MLnode/blob/898a2a794ac8b970090046d4a2d15dbacc407a42/MLnode_conf.py#L3) file located in the main directory.

@@ -4,6 +4,13 @@ from PyQt5.QtCore import *
 from utility import print_traceback
 import numpy as np
 
+class MLNode_trignode_graphicNode(MLnode_graphicNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 90
+        self.height = 100
+        self.title_height = 50.0
+
 class MLNode_trignode_content(QNode_content_widget):
     def initUI(self):
         # have a combo box for the trig function
@@ -16,6 +23,10 @@ class MLNode_trignode_content(QNode_content_widget):
         self.combo.addItem("cot")
         self.combo.setObjectName(self.node.content_label_objname)
         self.combo.setCurrentIndex(0)
+        self.combo.setMinimumWidth(90)
+        # change the font size of the combo box
+        self.combo.setFont(QFont("Times", 12))
+
     
     def serialize(self):
         res = super().serialize()
@@ -45,7 +56,8 @@ class MLNode_Trig(MLnode_node):
 
     def initInnerClasses(self):
         self.content = MLNode_trignode_content(self)
-        self.graphical_node = MLnode_graphicNode(self)
+        # self.graphical_node = MLnode_graphicNode(self)
+        self.graphical_node = MLNode_trignode_graphicNode(self)
         self.content.combo.currentIndexChanged.connect(self.onInputChanged)
 
     def evalImplementation(self):

@@ -44,6 +44,15 @@ class mlnode_sub_window(node_editor_widget):
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
         return get_class_from_opcode(data['op_code'])
+    
+    def fileload(self, file_name):
+        if super().fileload(file_name):
+            for node in self.scene.nodes:
+                if node.__class__.__name__ == 'MLNode_Output':
+                    node.eval()
+            return True
+        else:
+            return False
 
 
 
@@ -73,8 +82,6 @@ class mlnode_sub_window(node_editor_widget):
 
             mouse_position = event.pos()
             scene_position = self.scene.grscene.views()[0].mapToScene(mouse_position)
-
-            # print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
 
 
             # @TODO Fix me!

@@ -65,8 +65,31 @@ class MLnode_node(Node):
         self.value = None
         self.markDirty()
 
+    def evalOperation(self, input1, input2):
+        return np.array([0])
+
     def evalImplementation(self):
-        return np.array([1.0])
+        i1 = self.getInput(0)
+        i2 = self.getInput(1)
+
+        if i1 is None or i2 is None:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.graphical_node.setToolTip("Connect all inputs")
+            return None
+
+        else:
+            val = self.evalOperation(i1.eval(), i2.eval())
+            self.value = val
+            self.markDirty(False)
+            self.markInvalid(False)
+            self.graphical_node.setToolTip("")
+
+            self.markDescendantsDirty()
+            self.evalChildren()
+
+            return val
+
     
     def eval(self):
         if not self.isDirty() and not self.isInvalid():
@@ -75,7 +98,7 @@ class MLnode_node(Node):
         try:
             val = self.evalImplementation()
             return val
-        except ValueError as e: # The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+        except ValueError as e:
             self.markInvalid()
             self.graphical_node.setToolTip(str(e))
             self.markDescendantsDirty()

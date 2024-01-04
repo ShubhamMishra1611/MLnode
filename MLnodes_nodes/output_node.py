@@ -8,7 +8,7 @@ class MLnode_output_content(QNode_content_widget):
     def initUI(self):
         self.edit = QLabel("42", self)
         # make it longer 
-        self.edit.setMinimumWidth(100)
+        self.edit.setMinimumWidth(160)
         self.edit.setAlignment(Qt.AlignLeft)
         self.edit.setObjectName(self.node.content_label_objname)
 
@@ -33,17 +33,21 @@ class MLNode_Output(MLnode_node):
             self.graphical_node.setToolTip('Input is not connected')
             self.markInvalid()
             return
-        val = np.array(input_node.eval())
-        print(f'val is {val} ')
+        try:
+            val = np.array(input_node.eval())
+        except Exception as e:
+            self.graphical_node.setToolTip(f'Could not convert input to numpy array: {e}')
+            self.markInvalid()
+            return
         if val is None:
             self.graphical_node.setToolTip('Input is NaN')
             self.markInvalid()
             return
             
-        output_text = f'{val.shape} {val.dtype}' if val is not None else 'Nothing'
+        output_text = f'shape:{val.shape} dtype:{val.dtype}' 
         print(output_text)
         self.content.edit.setText(output_text)
         self.markInvalid(False)
         self.markDirty(False)
-        self.graphical_node.setToolTip(f'Output Tensor: {val}')
+        self.graphical_node.setToolTip(f'Output Tensor: shape: {val.shape}, dtype: {val.dtype}\n{val}')
         return val

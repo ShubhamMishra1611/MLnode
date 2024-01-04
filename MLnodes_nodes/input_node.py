@@ -44,7 +44,7 @@ class MLnode_Input(MLnode_node):
     def evalImplementation(self):
         unsafe_value = self.content.edit.text()
         safe_value = int(unsafe_value)
-        self.value = np.ones(shape=(safe_value, safe_value))
+        self.value = np.ones(shape=(safe_value,safe_value+1))
         self.markDirty(False)
         self.markInvalid(False)
 

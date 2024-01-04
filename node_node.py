@@ -94,6 +94,32 @@ class Node(Serializable):
             other_node.markInvalid(new_value)
             other_node.markChildrenInvalid(new_value)
 
+    def getInput(self, index=0):
+        try:
+            edge = self.inputs[index].edges[0]
+            socket = edge.getOtherSocket(self.inputs[index])
+            return socket.node
+        except IndexError as e:
+            print(f'getInput({index}) failed:', e)
+            return None
+        except Exception as e:
+            print(f'getInput({index}) failed:', e)
+            return None 
+        
+    def getInputs(self, index=0):
+        ins = []
+        for edge in self.inputs[index].edges:
+            other_socket = edge.getOtherSocket(self.inputs[index])
+            ins.append(other_socket.node)
+        return ins
+    
+    def getOutputs(self, index=0):
+        outs = []
+        for edge in self.outputs[index].edges:
+            other_socket = edge.getOtherSocket(self.outputs[index])
+            outs.append(other_socket.node)
+        return outs
+    
     def eval(self):
         self.markDirty(False)
         self.markInvalid(False)

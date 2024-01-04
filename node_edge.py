@@ -1,7 +1,7 @@
 from node_graphics_edge import *
 from collections import OrderedDict
 from node_serializable import Serializable
-
+from utility import print_traceback
 
 EGDE_DIRECT = 1
 EDGE_BEZIER = 2
@@ -94,6 +94,7 @@ class Edge(Serializable):
         self.start_socket = None
 
     def remove(self):
+        old_sockets = [self.start_socket, self.end_socket]
         self.remove_from_socket()
         self.scene.grscene.removeItem(self.graphical_edge)
         self.graphical_edge = None
@@ -101,6 +102,15 @@ class Edge(Serializable):
             self.scene.remove_edge(self)
         except ValueError:
             pass
+
+        try:
+            for socket in old_sockets:
+                if socket and socket.node:
+                    socket.node.onEdgeConnectionChanged(self)
+                    if socket.is_input:
+                        socket.node.onInputChanged(self)
+        except Exception as e:
+            print_traceback(e)
 
     def serialize(self):
         return OrderedDict([

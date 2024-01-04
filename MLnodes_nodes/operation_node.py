@@ -12,6 +12,11 @@ class MLNode_Add(MLnode_node):
     content_label = "+"
     content_label_objname = "mlnode_node_bg"
 
+    def evalImplementation(self):
+        self.markInvalid(False)
+        self.markDirty(False)
+        return 123
+
 @register_node(OP_NODE_MATMUL)
 class MLNode_Matmul(MLnode_node):
     icon = "icons/matmul.png"

@@ -6,6 +6,7 @@ from node_content_widget import QNode_content_widget
 from node_graphics import QgraphicsNode
 from node_socket import LEFT_CENTER, RIGHT_CENTER
 from utility import print_traceback
+import numpy as np
 
 class MLnode_graphicNode(QgraphicsNode):
     def initSizes(self):
@@ -65,7 +66,7 @@ class MLnode_node(Node):
         self.markDirty()
 
     def evalImplementation(self):
-        return 123
+        return np.array([1.0])
     
     def eval(self):
         if not self.isDirty() and not self.isInvalid():
@@ -73,11 +74,14 @@ class MLnode_node(Node):
             return self.value
         try:
             val = self.evalImplementation()
-            self.markDirty(False)
-            self.markInvalid(False)
             return val
+        except ValueError as e: # The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()
+            self.markInvalid()
+            self.graphical_node.setToolTip(str(e))
+            self.markDescendantsDirty()
         except Exception as e:
             self.markInvalid()
+            self.graphical_node.setToolTip(str(e))
             print_traceback(e)
     
     def onInputChanged(self, new_edge):

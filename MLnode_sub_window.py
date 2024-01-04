@@ -118,6 +118,8 @@ class mlnode_sub_window(node_editor_widget):
         deviceMenu = context_menu.addMenu("Select Device")
         cpuAct = deviceMenu.addAction("CPU")
         gpuAct = deviceMenu.addAction("GPU")
+        # add separator
+        context_menu.addSeparator()
         markDirtyAct = context_menu.addAction("Mark Dirty")
         markDirtyDescendantsAct = context_menu.addAction("Mark Descendant Dirty")
         markInvalidAct = context_menu.addAction("Mark Invalid")

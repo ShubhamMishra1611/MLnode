@@ -2,10 +2,11 @@ from MLnode_conf import *
 from MLnode_node_base import *
 from PyQt5.QtCore import *
 from utility import print_traceback
+import numpy as np
 
 class MLnode_input_content(QNode_content_widget):
     def initUI(self):
-        self.edit = QLineEdit("0", self)
+        self.edit = QLineEdit("1", self)
         self.edit.setAlignment(Qt.AlignRight)
         self.edit.setObjectName(self.node.content_label_objname)
     
@@ -39,5 +40,21 @@ class MLnode_Input(MLnode_node):
         self.content = MLnode_input_content(self)
         self.graphical_node = MLnode_graphicNode(self)
         self.content.edit.textChanged.connect(self.onInputChanged)
+
+    def evalImplementation(self):
+        unsafe_value = self.content.edit.text()
+        safe_value = int(unsafe_value)
+        self.value = np.ones(shape=(safe_value, safe_value))
+        self.markDirty(False)
+        self.markInvalid(False)
+
+        self.markDescendantsInvalid(False)
+        self.markDescendantsDirty()
+
+        self.graphical_node.setToolTip(f'Input Tensor: Shape = {self.value.shape}, dtype = {self.value.dtype}')
+
+        self.evalChildren()
+
+        return self.value
 
 

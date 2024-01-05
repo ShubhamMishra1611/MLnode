@@ -1,0 +1,87 @@
+{
+    "id": 2260034266992,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 2260034459760,
+            "title": "Input Eye Tensor",
+            "pos_x": -291.0,
+            "pos_y": -117.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2260034469744,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value": "1"
+            },
+            "op_code": 8
+        },
+        {
+            "id": 2260034504784,
+            "title": "Scalar Multiplication",
+            "pos_x": -78.0,
+            "pos_y": -139.0,
+            "inputs": [
+                {
+                    "id": 2260034504880,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2260034505024,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value": "1"
+            },
+            "op_code": 6
+        },
+        {
+            "id": 2260034505744,
+            "title": "Output Tensor",
+            "pos_x": 190.0,
+            "pos_y": -134.0,
+            "inputs": [
+                {
+                    "id": 2260034505840,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 2260034505696,
+            "edge_type": 2,
+            "start": 2260034469744,
+            "end": 2260034504880
+        },
+        {
+            "id": 2260034505792,
+            "edge_type": 2,
+            "start": 2260034505024,
+            "end": 2260034505840
+        }
+    ]
+}

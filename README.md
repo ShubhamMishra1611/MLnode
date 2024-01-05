@@ -1,6 +1,6 @@
-# Project Name
+# MLnode
 
-MLNode is a project that aims to provide a no-code environment and a platform similar to a node editor for developing numerical mathematics, deep learning models, testing models, and developing deep learning/machine learning pipelines.
+MLnode is a project that aims to provide a no-code environment and a platform similar to a node editor for developing numerical mathematics, deep learning models, testing models, and developing deep learning/machine learning pipelines.
 ## Motivation
 
 Major motivation is to provide a more visual and provide a no-code platform for developing deep learning models. This project is inspired by Blender's Geometry Nodes and aims to provide a similar experience for developing deep learning models.

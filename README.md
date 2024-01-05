@@ -31,7 +31,7 @@ python main.py
 
 ![svg](https://github.com/ShubhamMishra1611/MLnode/blob/2caed06ef23eff291d53d32d13c60c97ec44f127/res/Simple_matrix_calc.png)
 
-![svg](https://github.com/ShubhamMishra1611/MLnode/blob/2caed06ef23eff291d53d32d13c60c97ec44f127/res/Simple_trig.png)
+![svg](https://github.com/ShubhamMishra1611/MLnode/blob/89a0220559e60555d7deda43dc65fb586ddcc564/res/arange_node_test.png)
 This project is inspired by Blender's Geometry Nodes, and its usage is quite similar. To get started, follow the steps below:
 
 1. Create a new project: Click on `File -> New` or press `Ctrl+N`.

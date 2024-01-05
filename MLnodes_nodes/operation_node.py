@@ -54,16 +54,54 @@ class MLNode_Transpose(MLnode_node):
             self.evalChildren()
             return val
 
+
+class MLnode_scalar_graphicsNode(MLnode_graphicNode):
+    def initSizes(self):
+        super().initSizes()
+        self.height = 100.0
+        self.title_height = 50.0
+
+class MLnode_scalar_multiply_content(QNode_content_widget):
+    def initUI(self):
+        self.layout = QHBoxLayout(self)
+        self.label = QLabel("Value:", self)
+        self.edit = QLineEdit("1", self)
+        self.edit.setAlignment(Qt.AlignRight)
+        self.label.setAlignment(Qt.AlignRight)
+        self.edit.setObjectName(self.node.content_label_objname)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.edit)
+    
+    def serialize(self):
+        res = super().serialize()
+        res['value'] = self.edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['value']
+            self.edit.setText(value)
+            return True & res
+        except Exception as e:print_traceback(e)
+        return res
+
+
 @register_node(OP_NODE_SCALAR)
 class MLNode_Scalar(MLnode_node):
     icon = "icons/scalar.png"
     op_code = OP_NODE_SCALAR
-    op_title = "Scalar"
+    op_title = "Scalar Multiplication"
     content_label = "1"
     content_label_objname = "mlnode_node_scalar"
     
     def __init__(self, scene):
         super().__init__(scene, inputs=[1], outputs=[1])
+
+    def initInnerClasses(self):
+        self.content = MLnode_scalar_multiply_content(self)
+        self.graphical_node = MLnode_scalar_graphicsNode(self)
+        self.content.edit.textChanged.connect(self.onInputChanged)
 
     def evalImplementation(self):
         i1 = self.getInput(0)
@@ -73,14 +111,22 @@ class MLNode_Scalar(MLnode_node):
             self.graphical_node.setToolTip("Connect all inputs")
             return None
         else:
-            # multiplt the i1 scalar with the scalar value
-            val = i1.eval() * 2 # TODO: make things for here
-            self.value = val
-            self.markDirty(False)
-            self.markInvalid(False)
-            self.graphical_node.setToolTip("")
+            # multiply the i1 scalar with the scalar value
+            try:
+                value_ = self.content.edit.text()
+                safe_value_ = float(value_)
+                val = i1.eval() * safe_value_
+                self.value = val
+                self.markDirty(False)
+                self.markInvalid(False)
+                self.graphical_node.setToolTip(f"{self.value}: {self.get_device_type()}")
 
-            self.markDescendantsDirty()
-            self.evalChildren()
+                self.markDescendantsDirty()
+                self.evalChildren()
 
-            return val
+                return val
+            except Exception as e:
+                self.markInvalid()
+                self.markDescendantsDirty()
+                self.graphical_node.setToolTip("Invalid Scalar")
+                return None

@@ -167,7 +167,7 @@ class MLnode_input_arange_graphicsNode(MLnode_graphicNode):
     def initSizes(self):
         super().initSizes()
         self.width = 150
-        self.height = 200
+        self.height = 150
 
 class MLnode_input_arange_content(QNode_content_widget):
     def initUI(self):
@@ -176,7 +176,7 @@ class MLnode_input_arange_content(QNode_content_widget):
         self.label_end = QLabel("End:", self)
         self.label_step = QLabel("Step:", self)
         self.edit_start = QLineEdit("1", self)
-        self.edit_end = QLineEdit("1", self)
+        self.edit_end = QLineEdit("100", self)
         self.edit_step = QLineEdit("10", self)
         self.edit_start.setAlignment(Qt.AlignRight)
         self.edit_end.setAlignment(Qt.AlignRight)

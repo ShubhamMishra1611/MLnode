@@ -6,9 +6,9 @@ import numpy as np
 
 class MLnode_output_content(QNode_content_widget):
     def initUI(self):
-        self.edit = QLabel("42", self)
+        self.edit = QLabel("None", self)
         # make it longer 
-        self.edit.setMinimumWidth(160)
+        self.edit.setMinimumWidth(180)
         self.edit.setAlignment(Qt.AlignLeft)
         self.edit.setObjectName(self.node.content_label_objname)
 
@@ -49,5 +49,5 @@ class MLNode_Output(MLnode_node):
         self.content.edit.setText(output_text)
         self.markInvalid(False)
         self.markDirty(False)
-        self.graphical_node.setToolTip(f'Output Tensor: shape: {val.shape}, dtype: {val.dtype}\n{val}')
+        self.graphical_node.setToolTip(f'Output Tensor: shape: {val.shape}\n dtype: {val.dtype}\n{val}')
         return val

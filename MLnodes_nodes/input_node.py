@@ -4,12 +4,25 @@ from PyQt5.QtCore import *
 from utility import print_traceback
 import numpy as np
 import torch
+import ast
 
-class MLnode_input_content(QNode_content_widget):
+class MLnode_input_ones_graphicsNode(MLnode_graphicNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 150
+        self.height = 100
+        self.title_height = 50.0
+
+
+class MLnode_input_ones_content(QNode_content_widget):
     def initUI(self):
+        self.layout = QHBoxLayout(self)
+        self.label = QLabel("Size:", self)
         self.edit = QLineEdit("1", self)
         self.edit.setAlignment(Qt.AlignRight)
         self.edit.setObjectName(self.node.content_label_objname)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.edit)
     
     def serialize(self):
         res = super().serialize()
@@ -26,11 +39,11 @@ class MLnode_input_content(QNode_content_widget):
         return res
 
 
-@register_node(OP_NODE_INPUT)
+@register_node(OP_NODE_INPUT_ONES)
 class MLnode_Input(MLnode_node):
     icon = "icons/tensorinput.png"
-    op_code = OP_NODE_INPUT
-    op_title = "Input Tensor"
+    op_code = OP_NODE_INPUT_ONES
+    op_title = "Input Ones Tensor"
     content_label_objname = "mlnode_node_input"
 
     def __init__(self, scene):
@@ -38,14 +51,38 @@ class MLnode_Input(MLnode_node):
         self.eval()
 
     def initInnerClasses(self):
-        self.content = MLnode_input_content(self)
-        self.graphical_node = MLnode_graphicNode(self)
+        self.content = MLnode_input_ones_content(self)
+        self.graphical_node = MLnode_input_ones_graphicsNode(self)
         self.content.edit.textChanged.connect(self.onInputChanged)
+
+    def __is_valid_input(self, input):
+        # Check if the input is a list, tuple, torch.Tensor or np.ndarray
+        if isinstance(input, (list, tuple, torch.Tensor, np.ndarray)):
+            # Convert torch.Tensor or np.ndarray to list
+            if isinstance(input, (torch.Tensor, np.ndarray)):
+                input = input.tolist()
+            # Check if all elements in the input are integers and greater than 0
+            if len(input) > 0 and all(isinstance(i, int) and i > 0 for i in input):
+                return True
+        # Check if the input is a single integer and greater than 0
+        elif isinstance(input, int) and input > 0:
+            return True
+        # If none of the above conditions are met, return False
+        return False
 
     def evalImplementation(self):
         unsafe_value = self.content.edit.text()
-        safe_value = int(unsafe_value)
-        self.value = np.ones(shape=(safe_value,safe_value+1))
+        # look if the input is a single number or a sequence of numbers
+        try:
+            safe_value = ast.literal_eval(unsafe_value)
+            self.value = torch.ones(safe_value)
+        except Exception as e:
+            self.markInvalid(True)
+            self.markDirty(True)
+            self.markDescendantsInvalid(True)
+            self.markDescendantsDirty()
+            self.graphical_node.setToolTip(f'{e}')
+            return None 
         self.markDirty(False)
         self.markInvalid(False)
 

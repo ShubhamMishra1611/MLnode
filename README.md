@@ -29,7 +29,7 @@ python main.py
 ```
 ## Usage
 
-![svg](https://github.com/ShubhamMishra1611/MLnode/blob/2caed06ef23eff291d53d32d13c60c97ec44f127/res/Simple_matrix_calc.png)
+![svg](https://github.com/ShubhamMishra1611/MLnode/blob/4016ccb9c8c85398e41992b249e0a44e89946e98/examples/nnLineartest.png)
 
 ![svg](https://github.com/ShubhamMishra1611/MLnode/blob/89a0220559e60555d7deda43dc65fb586ddcc564/res/arange_node_test.png)
 This project is inspired by Blender's Geometry Nodes, and its usage is quite similar. To get started, follow the steps below:

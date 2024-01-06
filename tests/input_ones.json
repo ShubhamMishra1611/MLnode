@@ -1,0 +1,87 @@
+{
+    "id": 1396029613792,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 1396029806560,
+            "title": "Input Ones Tensor",
+            "pos_x": -60.0,
+            "pos_y": -137.0,
+            "inputs": [
+                {
+                    "id": 1396029816544,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1396029816640,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value": "5,5"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 1396029851872,
+            "title": "Output Tensor",
+            "pos_x": 146.0,
+            "pos_y": -115.0,
+            "inputs": [
+                {
+                    "id": 1396029851968,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        },
+        {
+            "id": 1396029864832,
+            "title": "Input Eye Tensor",
+            "pos_x": -319.0,
+            "pos_y": -98.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1396029864736,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value": "4"
+            },
+            "op_code": 8
+        }
+    ],
+    "edges": [
+        {
+            "id": 1396029851824,
+            "edge_type": 2,
+            "start": 1396029816640,
+            "end": 1396029851968
+        },
+        {
+            "id": 1396029864880,
+            "edge_type": 2,
+            "start": 1396029864736,
+            "end": 1396029816544
+        }
+    ]
+}

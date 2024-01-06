@@ -56,7 +56,6 @@ class MLNode_Trig(MLnode_node):
 
     def initInnerClasses(self):
         self.content = MLNode_trignode_content(self)
-        # self.graphical_node = MLnode_graphicNode(self)
         self.graphical_node = MLNode_trignode_graphicNode(self)
         self.content.combo.currentIndexChanged.connect(self.onInputChanged)
 

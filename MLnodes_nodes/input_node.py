@@ -47,7 +47,7 @@ class MLnode_Input(MLnode_node):
     content_label_objname = "mlnode_node_input"
 
     def __init__(self, scene):
-        super().__init__(scene, inputs=[], outputs=[3])
+        super().__init__(scene, inputs=[1], outputs=[3])
         self.eval()
 
     def initInnerClasses(self):
@@ -71,11 +71,18 @@ class MLnode_Input(MLnode_node):
         return False
 
     def evalImplementation(self):
-        unsafe_value = self.content.edit.text()
-        # look if the input is a single number or a sequence of numbers
+        i1 = self.getInput(0)
         try:
-            safe_value = ast.literal_eval(unsafe_value)
-            self.value = torch.ones(safe_value)
+            if i1 is not None:
+                self.content.edit.setEnabled(False)
+                value = i1.eval().shape
+                if self.__is_valid_input(value):
+                    self.value = torch.ones(value)
+            else:
+                self.content.edit.setEnabled(True)
+                value = self.content.edit.text()
+                safe_value = ast.literal_eval(value)
+                self.value = torch.ones(safe_value)
         except Exception as e:
             self.markInvalid(True)
             self.markDirty(True)

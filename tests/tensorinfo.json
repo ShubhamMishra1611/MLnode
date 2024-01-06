@@ -1,0 +1,210 @@
+{
+    "id": 2661452230528,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 2661452234128,
+            "title": "Input Ones Tensor",
+            "pos_x": -274.0,
+            "pos_y": -274.0,
+            "inputs": [
+                {
+                    "id": 2661452546688,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2661452546784,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value": "10"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2661452547264,
+            "title": "Input Arange",
+            "pos_x": -281.0,
+            "pos_y": -121.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2661452547456,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value_start": "1",
+                "value_end": "100",
+                "value_step": "10"
+            },
+            "op_code": 9
+        },
+        {
+            "id": 2661452547216,
+            "title": "Tensor info",
+            "pos_x": 231.0,
+            "pos_y": -299.0,
+            "inputs": [
+                {
+                    "id": 2661452547648,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2661452547744,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value": "shape"
+            },
+            "op_code": 10
+        },
+        {
+            "id": 2661452547552,
+            "title": "Matrix Addition",
+            "pos_x": -51.0,
+            "pos_y": -189.0,
+            "inputs": [
+                {
+                    "id": 2661452547888,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 2
+                },
+                {
+                    "id": 2661452548032,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2661452548128,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {},
+            "op_code": 3
+        },
+        {
+            "id": 2661452548320,
+            "title": "Output Tensor",
+            "pos_x": 195.0,
+            "pos_y": -99.0,
+            "inputs": [
+                {
+                    "id": 2661452548416,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        },
+        {
+            "id": 2661452548560,
+            "title": "Output Tensor",
+            "pos_x": -72.0,
+            "pos_y": -355.0,
+            "inputs": [
+                {
+                    "id": 2661452548800,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        },
+        {
+            "id": 2661452548272,
+            "title": "Output Tensor",
+            "pos_x": -90.0,
+            "pos_y": 124.0,
+            "inputs": [
+                {
+                    "id": 2661452546976,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 2661452547168,
+            "edge_type": 2,
+            "start": 2661452546784,
+            "end": 2661452547888
+        },
+        {
+            "id": 2661452547840,
+            "edge_type": 2,
+            "start": 2661452547456,
+            "end": 2661452548032
+        },
+        {
+            "id": 2661452548224,
+            "edge_type": 2,
+            "start": 2661452548128,
+            "end": 2661452547648
+        },
+        {
+            "id": 2661452234608,
+            "edge_type": 2,
+            "start": 2661452548128,
+            "end": 2661452548416
+        },
+        {
+            "id": 2661452233648,
+            "edge_type": 2,
+            "start": 2661452546784,
+            "end": 2661452548800
+        },
+        {
+            "id": 2661452546928,
+            "edge_type": 2,
+            "start": 2661452547456,
+            "end": 2661452546976
+        }
+    ]
+}

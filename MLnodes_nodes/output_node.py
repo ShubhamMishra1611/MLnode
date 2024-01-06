@@ -3,6 +3,7 @@ from MLnode_node_base import *
 from PyQt5.QtCore import *
 from utility import print_traceback
 import numpy as np
+import torch 
 
 class MLnode_output_content(QNode_content_widget):
     def initUI(self):
@@ -34,7 +35,7 @@ class MLNode_Output(MLnode_node):
             self.markInvalid()
             return
         try:
-            val = np.array(input_node.eval())
+            val = torch.tensor(input_node.eval())
         except Exception as e:
             self.graphical_node.setToolTip(f'Could not convert input to numpy array: {e}')
             self.markInvalid()

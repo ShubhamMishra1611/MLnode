@@ -3,6 +3,7 @@ from MLnode_node_base import *
 from PyQt5.QtCore import *
 from utility import print_traceback
 import numpy as np
+import torch
 
 class MLNode_trignode_graphicNode(MLnode_graphicNode):
     def initSizes(self):
@@ -69,17 +70,17 @@ class MLNode_Trig(MLnode_node):
         else:
             active_trig_function = self.content.combo.currentText()
             if active_trig_function == "sin":
-                val = np.sin(i1.eval())
+                val = torch.sin(i1.eval())
             elif active_trig_function == "cos":
-                val = np.cos(i1.eval())
+                val = torch.cos(i1.eval())
             elif active_trig_function == "tan":
-                val = np.tan(i1.eval())
+                val = torch.tan(i1.eval())
             elif active_trig_function == "csc":
-                val = 1/np.sin(i1.eval())
+                val = 1/torch.sin(i1.eval())
             elif active_trig_function == "sec":
-                val = 1/np.cos(i1.eval())
+                val = 1/torch.cos(i1.eval())
             elif active_trig_function == "cot":
-                val = 1/np.tan(i1.eval())
+                val = 1/torch.tan(i1.eval())
             else:
                 self.markInvalid()
                 self.markDescendantsDirty()

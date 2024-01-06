@@ -1,0 +1,166 @@
+{
+    "id": 2082093740240,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 2082093948912,
+            "title": "Input Ones Tensor",
+            "pos_x": -610.0,
+            "pos_y": -158.0,
+            "inputs": [
+                {
+                    "id": 2082093975392,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2082093975488,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value": "64"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2082093979520,
+            "title": "nn.Linear",
+            "pos_x": -155.0,
+            "pos_y": -177.0,
+            "inputs": [
+                {
+                    "id": 2082093979808,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2082093982256,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "64",
+                "value_outchannel": "32"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2082093979568,
+            "title": "Output Tensor",
+            "pos_x": 559.0,
+            "pos_y": -183.0,
+            "inputs": [
+                {
+                    "id": 2082093982400,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        },
+        {
+            "id": 2082093982352,
+            "title": "nn.Linear",
+            "pos_x": 96.0,
+            "pos_y": -181.0,
+            "inputs": [
+                {
+                    "id": 2082093982592,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2082093982688,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "32",
+                "value_outchannel": "8"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2082093982544,
+            "title": "nn.Linear",
+            "pos_x": 333.0,
+            "pos_y": -182.0,
+            "inputs": [
+                {
+                    "id": 2082093982832,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2082093982928,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "8",
+                "value_outchannel": "4"
+            },
+            "op_code": 11
+        }
+    ],
+    "edges": [
+        {
+            "id": 2082093979424,
+            "edge_type": 2,
+            "start": 2082093982928,
+            "end": 2082093982400
+        },
+        {
+            "id": 2082093982784,
+            "edge_type": 2,
+            "start": 2082093982688,
+            "end": 2082093982832
+        },
+        {
+            "id": 2082093983024,
+            "edge_type": 2,
+            "start": 2082093982256,
+            "end": 2082093982592
+        },
+        {
+            "id": 2082093948960,
+            "edge_type": 2,
+            "start": 2082093975488,
+            "end": 2082093979808
+        }
+    ]
+}

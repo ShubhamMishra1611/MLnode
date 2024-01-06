@@ -1,0 +1,292 @@
+{
+    "id": 2380163489488,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 2380163491408,
+            "title": "Input Ones Tensor",
+            "pos_x": -346.4,
+            "pos_y": 82.80000000000001,
+            "inputs": [
+                {
+                    "id": 2380163491456,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2380163491552,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value": "64"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2380163491792,
+            "title": "nn.Linear",
+            "pos_x": -142.19999999999996,
+            "pos_y": 22.40000000000001,
+            "inputs": [
+                {
+                    "id": 2380163491888,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2380163491984,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "64",
+                "value_outchannel": "32"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2380163492560,
+            "title": "nn.Linear",
+            "pos_x": 128.2,
+            "pos_y": 1.8000000000000007,
+            "inputs": [
+                {
+                    "id": 2380163492656,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2380163492704,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "32",
+                "value_outchannel": "8"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2380163490304,
+            "title": "nn.Linear",
+            "pos_x": 441.8000000000001,
+            "pos_y": -0.1999999999999993,
+            "inputs": [
+                {
+                    "id": 2380163493904,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2380163494000,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "8",
+                "value_outchannel": "4"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2380163494096,
+            "title": "Output Tensor",
+            "pos_x": 668.2,
+            "pos_y": 15.2,
+            "inputs": [
+                {
+                    "id": 2380163494192,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        },
+        {
+            "id": 2380163494336,
+            "title": "Tensor info",
+            "pos_x": 120.19999999999999,
+            "pos_y": -174.4,
+            "inputs": [
+                {
+                    "id": 2380163494288,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2380163492656,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value": "shape"
+            },
+            "op_code": 10
+        },
+        {
+            "id": 2380163492224,
+            "title": "Tensor info",
+            "pos_x": 404.8,
+            "pos_y": -185.8,
+            "inputs": [
+                {
+                    "id": 2380163493040,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2380163492704,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value": "shape"
+            },
+            "op_code": 10
+        },
+        {
+            "id": 2380163492800,
+            "title": "Scalar Multiplication",
+            "pos_x": 128.79999999999998,
+            "pos_y": 164.20000000000005,
+            "inputs": [
+                {
+                    "id": 2380163490160,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2380163490976,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value": "2"
+            },
+            "op_code": 6
+        },
+        {
+            "id": 2380163490256,
+            "title": "Output Tensor",
+            "pos_x": 430.00000000000006,
+            "pos_y": 169.8,
+            "inputs": [
+                {
+                    "id": 2380163492944,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 2380163491840,
+            "edge_type": 2,
+            "start": 2380163491552,
+            "end": 2380163491888
+        },
+        {
+            "id": 2380163493808,
+            "edge_type": 2,
+            "start": 2380163494000,
+            "end": 2380163494192
+        },
+        {
+            "id": 2380163494384,
+            "edge_type": 2,
+            "start": 2380163491984,
+            "end": 2380163494288
+        },
+        {
+            "id": 2380163490496,
+            "edge_type": 2,
+            "start": 2380163491984,
+            "end": 2380163490160
+        },
+        {
+            "id": 2380163494816,
+            "edge_type": 2,
+            "start": 2380163490976,
+            "end": 2380163492944
+        },
+        {
+            "id": 1789003601792,
+            "edge_type": 2,
+            "start": 2380163492656,
+            "end": 2380163491984
+        },
+        {
+            "id": 1789003601312,
+            "edge_type": 2,
+            "start": 2380163493040,
+            "end": 2380163492704
+        },
+        {
+            "id": 1789003601648,
+            "edge_type": 2,
+            "start": 2380163492704,
+            "end": 2380163493904
+        }
+    ]
+}

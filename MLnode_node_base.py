@@ -130,6 +130,9 @@ class MLnode_node(Node):
         res = super().deserialize(data, hashmap, restore_id)
         # print("Deserialized CalcNode '%s'" % self.__class__.__name__, "res:", res)
         return res
+    
+    def getImplemClassInstance(self):
+        return None
 
 
 

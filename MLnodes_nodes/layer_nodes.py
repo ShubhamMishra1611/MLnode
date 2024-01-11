@@ -89,11 +89,26 @@ class MLNode_nnLinear(MLnode_node):
             self.markDirty(False)
             self.markInvalid(False)
             self.graphical_node.setToolTip("")
-            # self.evalChildren()
+            self.evalChildren()
             return val
         except Exception as e:
             self.markInvalid()
             self.markDescendantsDirty()
             self.graphical_node.setToolTip("Invalid input")
+            return None
+        
+    def getImplemClassInstance(self):
+        hex_val = hex(id(self))[2:]
+        
+        for node in self.getChildrenNodes():
+            node.getImplemClassInstance()
+
+        for node in self.getParentNodes():
+            node.getImplemClassInstance()
+        
+        if not self.isDirty() and not self.isInvalid():
+            return [torch.nn.Linear(self.inchannel,
+                                   self.outchannel), hex_val]
+        else:
             return None
 

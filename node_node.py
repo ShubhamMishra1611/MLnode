@@ -139,7 +139,15 @@ class Node(Serializable):
                 other_node = edge.getOtherSocket(self.outputs[ix]).node
                 other_nodes.append(other_node)
         return other_nodes
-
+    
+    def getParentNodes(self):
+        if self.inputs == []: return []
+        other_nodes = []
+        for ix in range(len(self.inputs)):
+            for edge in self.inputs[ix].edges:
+                other_node = edge.getOtherSocket(self.inputs[ix]).node
+                other_nodes.append(other_node)
+        return other_nodes
     
     def initInnerClasses(self):
         self.content = QNode_content_widget(self)

@@ -57,6 +57,8 @@ class MLnodeWindow(node_editor_window):
 
         self.actTile = QAction("&Tile", self, statusTip="Tile the windows",triggered=self.mdiArea.tileSubWindows)
 
+        self.actModelRegister = QAction("&Register", self, statusTip="Register the model",triggered=self.on_model_register)
+
         self.actCascade = QAction("&Cascade", self,statusTip="Cascade the windows",triggered=self.mdiArea.cascadeSubWindows)
 
         self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild,statusTip="Move the focus to the next window",
@@ -147,11 +149,6 @@ class MLnodeWindow(node_editor_window):
         self.editMenu.aboutToShow.connect(self.updateEditMenu)
 
     def createNodesDock(self):
-        # self.listWidget = QListWidget()
-        # self.listWidget.addItem("Transpose")
-        # self.listWidget.addItem("Unit Matrix")
-        # self.listWidget.addItem("Dot Product")
-        # self.listWidget.addItem("Matmul")
         self.nodesListWidget = QDragListbox()
 
         self.nodesDock = QDockWidget("Nodes")
@@ -163,6 +160,15 @@ class MLnodeWindow(node_editor_window):
 
     def createToolBars(self):
         pass
+
+    def on_model_register(self):
+        all_nodes  = None
+        current_nodeeditor = self.get_current_node_editor_widget()
+        if current_nodeeditor is not None:
+            all_nodes = current_nodeeditor.scene.nodes
+
+        for node in all_nodes:
+            print(node.getImplemClassInstance())
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -177,6 +183,7 @@ class MLnodeWindow(node_editor_window):
         self.windowMenu.addSeparator()
         self.windowMenu.addAction(self.actTile)
         self.windowMenu.addAction(self.actCascade)
+        self.windowMenu.addAction(self.actModelRegister)
         self.windowMenu.addSeparator()
         self.windowMenu.addAction(self.actNext)
         self.windowMenu.addAction(self.actPrevious)

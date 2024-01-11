@@ -1,6 +1,9 @@
 import json
 import torch
 import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+import os
+import pandas as pd
 
 class Node:
     def __init__(self, node_dict):
@@ -30,7 +33,6 @@ class Model(nn.Module):
         self.layers = nn.ModuleDict()
         # self.layers = {}
         for node_id, node in self.graph.nodes.items():
-            print(f'node_id: {node_id}')
             if node.title == 'nn.Linear':
                 self.layers[str(node_id)] = nn.Linear(int(node.content['value_inchannel']), int(node.content['value_outchannel']))
 
@@ -47,15 +49,47 @@ class Model(nn.Module):
         except Exception as e:
             print(e)
 
+class CustomDataset(Dataset):
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.data = self.load_data()
+        self.file_type = self.file_path.split('.')[-1]
+
+    def load_data(self):
+        if self.file_path.endswith('csv'):
+            return pd.read_csv(self.file_path)
+        else:
+            return None
+        
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, idx):
+        if self.file_type == 'csv':
+            series = self.data.iloc[idx]
+            return torch.from_numpy(series.values.astype('float32'))
+        elif self.file_type == 'json':
+            return torch.from_numpy(self.data[idx].astype('float32'))
+        else:
+            return None
+
 if __name__ == '__main__':
     # Load the JSON data
-    with open(r'deleted_files\stuff_delete.json', 'r') as f:
+    with open(r'deleted_files\nn_linear_model_register_data.json', 'r') as f:
+    # with open(r'deleted_files\stuff_delete.json', 'r') as f:
         structure = json.load(f)
 
     # Create the graph and the model
     graph = Graph(structure)
     model = Model(graph)
+    dataset = None
+    for node_id, node in graph.nodes.items():
+        if node.title == 'getdata':
+            dataset = CustomDataset(node.content['value_file_name'])
+            dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+
+    print("printing the dataset")
+    for (x, y) in enumerate(dataloader):
+        print(x, y)
     print(model)
-    # x = torch.arange(0, 64, 1)
-    # print(model(x))
 

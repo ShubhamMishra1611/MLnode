@@ -10,6 +10,9 @@ from MLnode_conf import *
 # from MLnode_conf_nodes import *
 from pprint import pprint as pp 
 from utility import print_traceback
+import json
+
+from model_registeration import *
 
 DEBUG = False
 
@@ -162,13 +165,63 @@ class MLnodeWindow(node_editor_window):
         pass
 
     def on_model_register(self):
-        all_nodes  = None
+        # temporary save the graph in temp folder
+        # read the same graph and create the model
+
         current_nodeeditor = self.get_current_node_editor_widget()
         if current_nodeeditor is not None:
-            all_nodes = current_nodeeditor.scene.nodes
+            current_nodeeditor.fileSave('temp/temp.json')
+        with open('temp/temp.json', 'r') as f:
+            graph = json.load(f)
 
-        for node in all_nodes:
-            print(node.getImplemClassInstance())
+        grph = Graph(graph)
+        model = Model(grph)
+
+        print(model)
+        
+        # for dataset
+        dataloader = None
+        for node_id, node in grph.nodes.items():
+            if node.title == 'getdata':
+                dataset = CustomDataset(node.content['value_file_name'])
+                dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+                break
+
+        for (x, y) in enumerate(dataloader):
+            print(x, y)
+
+        # for training
+        training_config = None
+        with open('temp/training_config.json', 'r') as f:
+            training_config = json.load(f)
+
+        # training param
+        epoch = training_config['epoch']
+        optim = training_config['optim']
+        lr = training_config['lr']
+        loss = training_config['loss']
+
+        # for optimizer
+        optimizer = None
+        if optim == 'SGD':
+            optimizer = torch.optim.SGD(model.parameters(), lr=lr)
+        elif optim == 'Adam':
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+        else:
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
+        # for loss function
+        loss_fn = None
+        if loss == 'MSE':
+            loss_fn = torch.nn.MSELoss()
+        elif loss == 'CrossEntropy':
+            loss_fn = torch.nn.CrossEntropyLoss()
+        else:
+            loss_fn = torch.nn.MSELoss()
+
+        # for training
+        training = training_module(model, dataloader, optimizer, loss_fn)
+        training.train(epoch)
 
     def updateWindowMenu(self):
         self.windowMenu.clear()

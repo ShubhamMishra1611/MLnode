@@ -1,0 +1,149 @@
+{
+    "id": 2638910295200,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 2638910505312,
+            "title": "nn.Linear",
+            "pos_x": -211.0,
+            "pos_y": -100.0,
+            "inputs": [
+                {
+                    "id": 2638910517024,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2638910517120,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "3",
+                "value_outchannel": "2"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2638910519328,
+            "title": "nn.Linear",
+            "pos_x": -47.0,
+            "pos_y": -123.0,
+            "inputs": [
+                {
+                    "id": 2638910519424,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2638910519520,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "2",
+                "value_outchannel": "2"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2638910519376,
+            "title": "nn.Linear",
+            "pos_x": 214.0,
+            "pos_y": -122.0,
+            "inputs": [
+                {
+                    "id": 2638910519664,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2638910519760,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "2",
+                "value_outchannel": "1"
+            },
+            "op_code": 11
+        },
+        {
+            "id": 2638910520336,
+            "title": "getdata",
+            "pos_x": -436.0,
+            "pos_y": -33.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2638910520480,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_file_name": "D:/node editor ML/MLnode/deleted_files/fake_data.csv"
+            },
+            "op_code": 13
+        },
+        {
+            "id": 2638910520384,
+            "title": "Training",
+            "pos_x": 116.0,
+            "pos_y": 39.0,
+            "inputs": [],
+            "outputs": [],
+            "content": {
+                "value_epoch": "100",
+                "value_optim": 0,
+                "value_lr": "0.001",
+                "value_loss": 0
+            },
+            "op_code": 14
+        }
+    ],
+    "edges": [
+        {
+            "id": 2638910519280,
+            "edge_type": 2,
+            "start": 2638910517120,
+            "end": 2638910519424
+        },
+        {
+            "id": 2638910519616,
+            "edge_type": 2,
+            "start": 2638910519520,
+            "end": 2638910519664
+        },
+        {
+            "id": 2127403216864,
+            "edge_type": 2,
+            "start": 2638910520480,
+            "end": 2638910517024
+        }
+    ]
+}

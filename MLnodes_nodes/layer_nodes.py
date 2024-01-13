@@ -92,6 +92,7 @@ class MLNode_nnLinear(MLnode_node):
             self.evalChildren()
             return val
         except Exception as e:
+            print_traceback(e)
             self.markInvalid()
             self.markDescendantsDirty()
             self.graphical_node.setToolTip("Invalid input")

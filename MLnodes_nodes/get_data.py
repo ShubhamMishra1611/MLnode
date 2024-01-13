@@ -4,6 +4,9 @@ from PyQt5.QtCore import *
 from utility import print_traceback
 import numpy as np
 import torch
+import pandas as pd
+import glob
+import os
 
 
 class MLnode_getdata_graphicsNode(MLnode_graphicNode):
@@ -28,21 +31,22 @@ class MLnode_getdata_content(QNode_content_widget):
         self.layout.addWidget(self.browse_button)
 
     def browse(self):
-        file_name = QFileDialog.getOpenFileName(self, 'Open file', '/home')[0]
-        self.label_file_name.setText(file_name)
+        file_name = QFileDialog.getOpenFileName(self, 'Open file')[0]
         self.file_path = file_name
+        file_name = os.path.basename(file_name)
+        self.label_file_name.setText(file_name)
         self.file = file_name
 
     def serialize(self):
         res = super().serialize()
-        res['value_file_name'] = self.label_file_name.text()
+        res['value_file_name'] = self.file_path
         return res
     
     def deserialize(self, data, hashmap={}):
         res = super().deserialize(data, hashmap)
         try:
             value_file_name = data['value_file_name']
-            self.label_file_name.setText(value_file_name)
+            self.label_file_name.setText(os.path.basename(value_file_name))
             return True & res
         except Exception as e:print_traceback(e)
         return res
@@ -70,8 +74,17 @@ class MLnode_getdata(MLnode_node):
             else:
                 # check if file is csv
                 if self.content.file_path.endswith('csv'):
-                    return 123
+                    data = pd.read_csv(self.content.file_path)
+                    data = data.to_numpy(dtype=np.float32)
+                    data = torch.from_numpy(data)
+                    self.markInvalid(False)
+                    self.markDirty(False)
+                    self.graphical_node.setToolTip(f"Shape: {data.shape}")
+                    self.value = data[0]
+                    return self.value
                 else:
+                    self.markInvalid()
+                    self.graphical_node.setToolTip("File type not supported")
                     return None        
         except Exception as e:print_traceback(e)
 

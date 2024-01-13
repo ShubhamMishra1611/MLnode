@@ -187,9 +187,6 @@ class MLnodeWindow(node_editor_window):
                 dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
                 break
 
-        for (x, y) in enumerate(dataloader):
-            print(x, y)
-
         # for training
         training_config = None
         with open('temp/training_config.json', 'r') as f:

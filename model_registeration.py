@@ -5,6 +5,9 @@ from torch.utils.data import Dataset, DataLoader
 import os
 import pandas as pd
 from utility import print_traceback 
+import sys
+
+DEBUG = False
 
 class GraphNode:
     def __init__(self, node_dict):
@@ -25,7 +28,6 @@ class Graph:
         for node in structure['nodes']:
             # Only consider nodes with non-empty 'outputs' list
             if node['outputs']: # TODO: this should not be output but should be input or id of node itself
-                # self.nodes[node['outputs'][0]['id']] = GraphNode(node) # this is assuming the fact that only one socket is there for output
                 self.nodes[node['id']] = GraphNode(node) 
         self.edges = [GraphEdge(edge) for edge in structure['edges']]
 
@@ -33,6 +35,7 @@ class Graph:
         return f'{self.nodes = }\n{self.edges = }'
     
     def getParentNode(self, node_id):
+        p_id = None
         for edge in self.edges:
             if edge.end == self.nodes[node_id].inputs[0]['id']:
                 return edge.start
@@ -47,10 +50,15 @@ class Model(nn.Module):
             if node.title == 'nn.Linear':
                 self.layers[str(node_id)] = nn.Linear(int(node.content['value_inchannel']), int(node.content['value_outchannel']))
 
-    def find_node(self, input_id):
+    def find_node(self, input_id, inputoroutput='input'):
         for nodeid, node in self.graph.nodes.items():
-            if node.inputs[0]['id'] == input_id:
-                return nodeid#TODO: try expect daal de 
+            if inputoroutput == 'input':
+                if node.inputs[0]['id'] == input_id:
+                    return nodeid
+            elif inputoroutput == 'output':
+                if node.outputs[0]['id'] == input_id:
+                    return nodeid
+        return None 
         
     
     def forward(self, x):
@@ -59,23 +67,24 @@ class Model(nn.Module):
         for node_id, node in self.graph.nodes.items():
             if node.title == 'getdata':
                 continue
-            if self.graph.getParentNode(node_id) is None:
+            if DEBUG: print(f'{node_id = }')
+            parent_node = self.graph.getParentNode(node_id)
+            if DEBUG: print(f'{parent_node = }')
+            parentnodeid = self.find_node(self.graph.getParentNode(node_id), inputoroutput="output")
+            if DEBUG: print(f'{parentnodeid = }')
+            parent_node_title = self.graph.nodes[parentnodeid].title
+            if DEBUG: print(f'{parent_node_title = }')
+            if parent_node_title == 'getdata':
                 current_id = node_id
                 break
-
-        # print(f'{current_id = } and node is {self.graph.nodes[current_id].title}')
-
-        # current_id = next(node_id for node_id, node in self.graph.nodes.items() if not node.inputs and not node.title.startswith('getdata'))
+        if DEBUG: print(f'{current_id = }')
         try:
             while True:
                 x = self.layers[str(current_id)](x)
-                # next_edges = [edge for edge in self.graph.edges if edge.start == current_id]# TODO: Error found here the node id should be checked for input and output and not node id
-                next_edges = [edge for edge in self.graph.edges if edge.start == self.graph.nodes[current_id].outputs[0]['id']]# TODO: Error found here the node id should be checked for input and output and not node id
-                if not next_edges:  # No more edges, stop
-                    break
+                next_edges = [edge for edge in self.graph.edges if edge.start == self.graph.nodes[current_id].outputs[0]['id']]
+                if not next_edges: break # No more edges, stop
                 current_id = self.find_node(next_edges[0].end)
-                # print(f'second time {current_id = }')
-                # current_id = next_edges[0].end  # Follow the edge to the next node
+                if current_id is None: break
             return x
         except Exception as e:
             print_traceback(e)
@@ -131,8 +140,7 @@ class training_module:
 
 if __name__ == '__main__':
     # Load the JSON data
-    with open(r'temp\temp.json', 'r') as f:
-    # with open(r'deleted_files\stuff_delete.json', 'r') as f:
+    with open(r'samples\training_test.json', 'r') as f:
         structure = json.load(f)
 
     # Create the graph and the model
@@ -147,17 +155,8 @@ if __name__ == '__main__':
     for (x, y) in enumerate(dataloader):
         print(x, y)
     print(f'{model = }')
-
-    # x = torch.ones(64)
-    # print(f'got value as {model(x).size()}')
-
-    # test for custom dataset
-    # make a model of 
     dataset = CustomDataset('deleted_files/fake_data.csv')
     dataloader = DataLoader(dataset, batch_size=3, shuffle=True)
-    # for (x, y) in enumerate(dataloader):
-    #     print(x, y)
-
     # train the model
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     loss_fn = nn.MSELoss()

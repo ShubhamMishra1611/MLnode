@@ -28,7 +28,6 @@ class MLNode_Output(MLnode_node):
         self.graphical_node = MLnode_graphicNode(self)
 
     def evalImplementation(self):
-        # self.graphical_node.setToolTip(f'Output Tensor: {self.value.shape}')
         input_node = self.getInput(0)
         if not input_node:
             self.graphical_node.setToolTip('Input is not connected')

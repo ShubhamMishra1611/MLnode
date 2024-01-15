@@ -1,6 +1,3 @@
-
-# __all__ = ['input_node', 'operation_node', 'output_node']
-
 from os.path import basename, dirname, isfile, join
 import glob
 

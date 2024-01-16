@@ -13,7 +13,6 @@ class MLNode_tensor_info_node_graphicNode(MLnode_graphicNode):
 
 class MLNode_tensor_info_node_content(QNode_content_widget):
     def initUI(self):
-        # have a combo box for the trig function
         self.layout = QVBoxLayout(self)
         self.combo = QComboBox(self)
         self.combo.addItem("shape")
@@ -21,7 +20,6 @@ class MLNode_tensor_info_node_content(QNode_content_widget):
         self.combo.addItem("numelem")
         self.combo.setObjectName(self.node.content_label_objname)
         self.combo.setCurrentIndex(0)
-        # change the font size of the combo box
         self.combo.setFont(QFont("Times", 9))
         self.label = QLabel("None", self)
         self.layout.addWidget(self.combo)

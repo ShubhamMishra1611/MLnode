@@ -343,3 +343,69 @@ class MLnode_flatten(MLnode_node):
                 self.markDescendantsDirty()
                 self.graphical_node.setToolTip("Invalid Shape")
                 return None
+            
+class MLnode_normalization_graphicsNode(MLnode_graphicNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 150
+        self.height = 80
+
+class MLnode_normalization_content(QNode_content_widget):
+    def initUI(self):
+        self.layout = QHBoxLayout(self)
+        self.label = QLabel("Normalize", self)
+        self.layout.addWidget(self.label)
+
+    def serialize(self):
+        res = super().serialize()
+        return res
+    
+    def deserialize(self, data, hashmap={}):
+        res = super().deserialize(data, hashmap)
+        try:
+            return True & res
+        except Exception as e:print_traceback(e)
+        return res
+    
+@register_node(OP_NODE_NORMALIZATION)
+class MLnode_normalization(MLnode_node):
+    icon = "icons/normalization.png"
+    op_code = OP_NODE_NORMALIZATION
+    op_title = "Normalization"
+    content_label = "normalization"
+    content_label_objname = "mlnode_node_normalization"
+
+    def __init__(self, scene):
+        super().__init__(scene, inputs=[1], outputs=[1])
+
+    def initInnerClasses(self):
+        self.content = MLnode_normalization_content(self)
+        self.graphical_node = MLnode_normalization_graphicsNode(self)
+
+    
+    def evalImplementation(self):
+        i1 = self.getInput(0)
+        if i1 is None:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.graphical_node.setToolTip("Connect all inputs")
+            return None
+        else:
+            try:
+                this_tensor = i1.eval()
+                # ensure that tensor is not 1D
+                if len(this_tensor.shape) == 1:
+                    this_tensor = this_tensor.unsqueeze(0)
+                val = torch.nn.functional.normalize(this_tensor)
+                self.value = val
+                self.markDirty(False)
+                self.markInvalid(False)
+                self.graphical_node.setToolTip("")
+                self.markDescendantsDirty()
+                self.evalChildren()
+                return val
+            except Exception as e:
+                self.markInvalid()
+                self.markDescendantsDirty()
+                self.graphical_node.setToolTip(f"{e}")
+                return None

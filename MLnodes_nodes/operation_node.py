@@ -409,3 +409,171 @@ class MLnode_normalization(MLnode_node):
                 self.markDescendantsDirty()
                 self.graphical_node.setToolTip(f"{e}")
                 return None
+            
+
+class MLnode_clipping_graphicsNode(MLnode_graphicNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 150
+        self.height = 100
+
+class MLnode_clipping_content(QNode_content_widget):
+    def initUI(self):
+        self.layout = QGridLayout(self)
+        self.label_min = QLabel("min", self)
+        self.edit_min = QLineEdit("0.0", self)
+        self.label_max = QLabel("max", self)
+        self.edit_max = QLineEdit("1.0", self)
+        self.edit_min.setObjectName(self.node.content_label_objname)
+        self.edit_max.setObjectName(self.node.content_label_objname)
+        self.layout.addWidget(self.label_min, 0, 0)
+        self.layout.addWidget(self.edit_min, 0, 1)
+        self.layout.addWidget(self.label_max, 1, 0)
+        self.layout.addWidget(self.edit_max, 1, 1)
+
+    def serialize(self):
+        res = super().serialize()
+        res['min'] = self.edit_min.text()
+        res['max'] = self.edit_max.text()
+        return res
+    
+    def deserialize(self, data, hashmap={}):
+        res = super().deserialize(data, hashmap)
+        try:
+            min = data['min']
+            max = data['max']
+            self.edit_min.setText(min)
+            self.edit_max.setText(max)
+            return True & res
+        except Exception as e:print_traceback(e)
+        return res
+    
+
+@register_node(OP_NODE_CLIPPING)
+class MLnode_clipping(MLnode_node):
+    icon = "icons/clipping.png"
+    op_code = OP_NODE_CLIPPING
+    op_title = "Clipping"
+    content_label = "clipping"
+    content_label_objname = "mlnode_node_clipping"
+
+    def __init__(self, scene):
+        super().__init__(scene, inputs=[1], outputs=[1])
+
+    def initInnerClasses(self):
+        self.content = MLnode_clipping_content(self)
+        self.graphical_node = MLnode_clipping_graphicsNode(self)
+        self.content.edit_min.textChanged.connect(self.onInputChanged)
+        self.content.edit_max.textChanged.connect(self.onInputChanged)
+
+    
+    def evalImplementation(self):
+        i1 = self.getInput(0)
+        if i1 is None:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.graphical_node.setToolTip("Connect all inputs")
+            return None
+        else:
+            try:
+                u_min = self.content.edit_min.text()
+                u_max = self.content.edit_max.text()
+                s_min = float(u_min)
+                s_max = float(u_max)
+                val = torch.clamp(i1.eval(), s_min, s_max)
+                self.value = val
+                self.markDirty(False)
+                self.markInvalid(False)
+                self.graphical_node.setToolTip("")
+                self.markDescendantsDirty()
+                self.evalChildren()
+                return val
+            except Exception as e:
+                self.markInvalid()
+                self.markDescendantsDirty()
+                self.graphical_node.setToolTip(f"{e}")
+                return None
+            
+class MLnode_changedtype_graphicsNode(MLnode_graphicNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 150
+        self.height = 100
+
+class MLnode_changedtype_content(QNode_content_widget):
+    def initUI(self):
+        self.layout = QGridLayout(self)
+        self.label_type = QLabel("type", self)
+        self.combo_type = QComboBox(self)
+        types = ["float32", "float64", "int32", "int64", "uint8", "bool"]
+
+        for type in types:
+            self.combo_type.addItem(type)
+        self.combo_type.setObjectName(self.node.content_label_objname)
+
+        self.layout.addWidget(self.label_type, 0, 0)
+        self.layout.addWidget(self.combo_type, 0, 1)
+
+    def serialize(self):
+        res = super().serialize()
+        res['type'] = self.combo_type.currentText()
+        return res
+    
+    def deserialize(self, data, hashmap={}):
+        res = super().deserialize(data, hashmap)
+        try:
+            type = data['type']
+            self.combo_type.setCurrentText(type)
+            return True & res
+        except Exception as e:print_traceback(e)
+        return res
+    
+
+@register_node(OP_NODE_CHANGEDTYPE)
+class MLnode_changedtype(MLnode_node):
+    icon = "icons/changedtype.png"
+    op_code = OP_NODE_CHANGEDTYPE
+    op_title = "Changed Type"
+    content_label = "changedtype"
+    content_label_objname = "mlnode_node_changedtype"
+
+    def __init__(self, scene):
+        super().__init__(scene, inputs=[1], outputs=[1])
+
+    def initInnerClasses(self):
+        self.content = MLnode_changedtype_content(self)
+        self.graphical_node = MLnode_changedtype_graphicsNode(self)
+        self.content.combo_type.currentTextChanged.connect(self.onInputChanged)
+
+    
+    def evalImplementation(self):
+        i1 = self.getInput(0)
+        if i1 is None:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.graphical_node.setToolTip("Connect all inputs")
+            return None
+        else:
+            try:
+                u_type = self.content.combo_type.currentText()
+                dtype_map = {
+                    "float32": torch.float32,
+                    "float64": torch.float64,
+                    "int32": torch.int32,
+                    "int64": torch.int64,
+                    "uint8": torch.uint8,
+                    "bool": torch.bool
+                }
+                val = i1.eval().type(dtype_map[u_type])
+                self.value = val
+                self.markDirty(False)
+                self.markInvalid(False)
+                self.graphical_node.setToolTip("")
+                self.markDescendantsDirty()
+                self.evalChildren()
+                return val
+            except Exception as e:
+                self.markInvalid()
+                self.markDescendantsDirty()
+                self.graphical_node.setToolTip(f"{e}")
+                return None

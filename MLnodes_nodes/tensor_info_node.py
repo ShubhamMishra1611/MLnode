@@ -8,7 +8,7 @@ import torch
 class MLNode_tensor_info_node_graphicNode(MLnode_graphicNode):
     def initSizes(self):
         super().initSizes()
-        self.width = 150
+        self.width = 170
         self.height = 110
 
 class MLNode_tensor_info_node_content(QNode_content_widget):

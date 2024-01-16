@@ -1,0 +1,145 @@
+{
+    "id": 1818306225024,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 1818364238416,
+            "title": "getimgdata",
+            "pos_x": -375.0,
+            "pos_y": -89.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1818364238560,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_file_name": "D:/node editor ML/MLnode/deleted_files/random_img.png"
+            },
+            "op_code": 17
+        },
+        {
+            "id": 1818364238464,
+            "title": "Flatten",
+            "pos_x": -189.0,
+            "pos_y": -77.0,
+            "inputs": [
+                {
+                    "id": 1818364238704,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1818364241152,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "dim0": "0",
+                "dim1": "-1"
+            },
+            "op_code": 16
+        },
+        {
+            "id": 1818364238608,
+            "title": "Changed Type",
+            "pos_x": 1.0,
+            "pos_y": -85.0,
+            "inputs": [
+                {
+                    "id": 1818364246672,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1818364246768,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "type": "float64"
+            },
+            "op_code": 20
+        },
+        {
+            "id": 1818364241248,
+            "title": "Output Tensor",
+            "pos_x": 329.0,
+            "pos_y": -162.0,
+            "inputs": [
+                {
+                    "id": 1818364246912,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        },
+        {
+            "id": 1818364246864,
+            "title": "nn.Linear",
+            "pos_x": 208.0,
+            "pos_y": -79.0,
+            "inputs": [
+                {
+                    "id": 1818364247152,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1818364247200,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_inchannel": "64",
+                "value_outchannel": "32"
+            },
+            "op_code": 11
+        }
+    ],
+    "edges": [
+        {
+            "id": 1818364238368,
+            "edge_type": 2,
+            "start": 1818364238560,
+            "end": 1818364238704
+        },
+        {
+            "id": 1818364354208,
+            "edge_type": 2,
+            "start": 1818364241152,
+            "end": 1818364246672
+        }
+    ]
+}

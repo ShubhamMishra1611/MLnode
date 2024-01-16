@@ -8,12 +8,11 @@ import pandas as pd
 import glob
 import os
 
-
 class MLnode_getdata_graphicsNode(MLnode_graphicNode):
     def initSizes(self):
         super().initSizes()
         self.width = 150
-        self.height = 100
+        self.height = 160
 
 class MLnode_getdata_content(QNode_content_widget):
     def initUI(self):
@@ -22,13 +21,19 @@ class MLnode_getdata_content(QNode_content_widget):
 
         self.browse_button = QPushButton("Browse")
         self.browse_button.clicked.connect(self.browse)
+        self.y_col_label = QLabel("Y column")
+        self.y_col = QLineEdit()
+        self.y_col.setText("-1")
         self.browse_button.setObjectName(self.node.content_label_objname)
+        self.y_col.setObjectName(self.node.content_label_objname)
 
         self.file = None
         self.file_path = None
 
         self.layout.addWidget(self.label_file_name)
         self.layout.addWidget(self.browse_button)
+        self.layout.addWidget(self.y_col_label)
+        self.layout.addWidget(self.y_col)
 
     def browse(self):
         file_name = QFileDialog.getOpenFileName(self, 'Open file')[0]
@@ -40,13 +45,16 @@ class MLnode_getdata_content(QNode_content_widget):
     def serialize(self):
         res = super().serialize()
         res['value_file_name'] = self.file_path
+        res['y_col'] = self.y_col.text()
         return res
     
     def deserialize(self, data, hashmap={}):
         res = super().deserialize(data, hashmap)
         try:
             value_file_name = data['value_file_name']
+            y_col = data['y_col']
             self.label_file_name.setText(os.path.basename(value_file_name))
+            self.y_col.setText(y_col)
             return True & res
         except Exception as e:print_traceback(e)
         return res
@@ -77,6 +85,12 @@ class MLnode_getdata(MLnode_node):
                     data = pd.read_csv(self.content.file_path)
                     data = data.to_numpy(dtype=np.float32)
                     data = torch.from_numpy(data)
+                    print(f"Data shape: {data.shape}")
+                    y_col = int(self.content.y_col.text())
+                    if y_col == -1:
+                        y_col = data.shape[1]-1
+                    data = data[:, :y_col]
+                    print(f"Y shape: {data.shape}")
                     self.markInvalid(False)
                     self.markDirty(False)
                     self.graphical_node.setToolTip(f"Shape: {data.shape}")

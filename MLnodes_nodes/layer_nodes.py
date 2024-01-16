@@ -78,10 +78,14 @@ class MLNode_nnLinear(MLnode_node):
         try:
             input_tensor = input_node.eval()
             if input_tensor.shape[0] != int(u_inchannel): # check if input_value can be given to nn.Linear
-                self.markInvalid()
-                self.markDescendantsDirty()
-                self.graphical_node.setToolTip("Input shape does not match with the input channel")
-                return None
+                # set the inchannel value to shape of input_value
+                self.content.edit_inchannel.setText(str(input_tensor.shape[0]))
+                u_inchannel = input_tensor.shape[0]
+
+                # self.markInvalid()
+                # self.markDescendantsDirty()
+                # self.graphical_node.setToolTip("Input shape does not match with the input channel")
+                # return None
             inchannel = int(u_inchannel)
             outchannel = int(u_outchannel)
             val = torch.nn.Linear(inchannel, outchannel, bias=True)(input_node.eval())

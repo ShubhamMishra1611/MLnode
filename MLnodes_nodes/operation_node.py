@@ -260,3 +260,86 @@ class MLnode_reshape(MLnode_node):
                 self.markDescendantsDirty()
                 self.graphical_node.setToolTip("Invalid Shape")
                 return None
+            
+class MLnode_flatten_graphicsNode(MLnode_graphicNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 150
+        self.height = 100
+
+class MLnode_flatten_content(QNode_content_widget):
+    def initUI(self):
+        self.layout = QGridLayout(self)
+        self.label_dim0 = QLabel("dim0", self)
+        self.edit_dim0 = QLineEdit("0", self)
+        self.label_dim1 = QLabel("dim1", self)
+        self.edit_dim1 = QLineEdit("-1", self)
+        self.edit_dim0.setObjectName(self.node.content_label_objname)
+        self.edit_dim1.setObjectName(self.node.content_label_objname)
+        self.layout.addWidget(self.label_dim0, 0, 0)
+        self.layout.addWidget(self.edit_dim0, 0, 1)
+        self.layout.addWidget(self.label_dim1, 1, 0)
+        self.layout.addWidget(self.edit_dim1, 1, 1)
+
+
+    def serialize(self):
+        res = super().serialize()
+        res['dim0'] = self.edit_dim0.text()
+        res['dim1'] = self.edit_dim1.text()
+        return res
+    
+    def deserialize(self, data, hashmap={}):
+        res = super().deserialize(data, hashmap)
+        try:
+            dim0 = data['dim0']
+            dim1 = data['dim1']
+            self.edit_dim0.setText(dim0)
+            self.edit_dim1.setText(dim1)
+            return True & res
+        except Exception as e:print_traceback(e)
+        return res
+    
+@register_node(OP_NODE_FLATTEN)
+class MLnode_flatten(MLnode_node):
+    icon = "icons/flatten.png"
+    op_code = OP_NODE_FLATTEN
+    op_title = "Flatten"
+    content_label = "flatten"
+    content_label_objname = "mlnode_node_flatten"
+
+    def __init__(self, scene):
+        super().__init__(scene, inputs=[1], outputs=[1])
+
+    def initInnerClasses(self):
+        self.content = MLnode_flatten_content(self)
+        self.graphical_node = MLnode_flatten_graphicsNode(self)
+        self.content.edit_dim0.textChanged.connect(self.onInputChanged)
+        self.content.edit_dim1.textChanged.connect(self.onInputChanged)
+
+    
+    def evalImplementation(self):
+        i1 = self.getInput(0)
+        if i1 is None:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.graphical_node.setToolTip("Connect all inputs")
+            return None
+        else:
+            try:
+                u_dim0 = self.content.edit_dim0.text()
+                u_dim1 = self.content.edit_dim1.text()
+                s_dim0 = int(u_dim0)
+                s_dim1 = int(u_dim1)
+                val = torch.flatten(i1.eval(), s_dim0, s_dim1)
+                self.value = val
+                self.markDirty(False)
+                self.markInvalid(False)
+                self.graphical_node.setToolTip("")
+                self.markDescendantsDirty()
+                self.evalChildren()
+                return val
+            except Exception as e:
+                self.markInvalid()
+                self.markDescendantsDirty()
+                self.graphical_node.setToolTip("Invalid Shape")
+                return None

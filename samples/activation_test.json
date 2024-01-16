@@ -1,0 +1,123 @@
+{
+    "id": 1873945791696,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 1873946018192,
+            "title": "Activation function",
+            "pos_x": -9.0,
+            "pos_y": -93.0,
+            "inputs": [
+                {
+                    "id": 1873946027456,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1873946027552,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value": "sigmoid"
+            },
+            "op_code": 15
+        },
+        {
+            "id": 1873946029760,
+            "title": "Input Arange",
+            "pos_x": -416.0,
+            "pos_y": -106.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1873946070560,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 3
+                }
+            ],
+            "content": {
+                "value_start": "1",
+                "value_end": "100",
+                "value_step": "10"
+            },
+            "op_code": 9
+        },
+        {
+            "id": 1873946071280,
+            "title": "Scalar Multiplication",
+            "pos_x": -228.0,
+            "pos_y": -90.0,
+            "inputs": [
+                {
+                    "id": 1873946072048,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1873946072144,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value": "0.01"
+            },
+            "op_code": 6
+        },
+        {
+            "id": 1873946071328,
+            "title": "Output Tensor",
+            "pos_x": 167.0,
+            "pos_y": -70.0,
+            "inputs": [
+                {
+                    "id": 1873946072288,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 1873946071232,
+            "edge_type": 2,
+            "start": 1873946070560,
+            "end": 1873946072048
+        },
+        {
+            "id": 1873946072240,
+            "edge_type": 2,
+            "start": 1873946072144,
+            "end": 1873946027456
+        },
+        {
+            "id": 1873946072432,
+            "edge_type": 2,
+            "start": 1873946027552,
+            "end": 1873946072288
+        }
+    ]
+}

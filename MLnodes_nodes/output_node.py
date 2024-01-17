@@ -8,7 +8,6 @@ import torch
 class MLnode_output_content(QNode_content_widget):
     def initUI(self):
         self.edit = QLabel("None", self)
-        # make it longer 
         self.edit.setMinimumWidth(180)
         self.edit.setAlignment(Qt.AlignLeft)
         self.edit.setObjectName(self.node.content_label_objname)

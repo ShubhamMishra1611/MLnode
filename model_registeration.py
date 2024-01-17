@@ -71,7 +71,7 @@ class Model(nn.Module):
         current_id = None
         for node_id, node in self.graph.nodes.items():
             if node.opcode % 100 == 13:
-                print(f'node.title = {node.title}')
+                if DEBUG: print(f'node.title = {node.title}')
             # if node.title == 'getdata':
                 continue
             if DEBUG: print(f'{node_id = }')

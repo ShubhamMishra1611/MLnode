@@ -65,7 +65,7 @@ class MLNode_nnLinear(MLnode_node):
         self.content.edit_inchannel.textChanged.connect(self.onInputChanged)
         self.content.edit_outchannel.textChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         u_inchannel = self.content.edit_inchannel.text()
         u_outchannel = self.content.edit_outchannel.text()
 
@@ -89,12 +89,12 @@ class MLNode_nnLinear(MLnode_node):
             inchannel = int(u_inchannel)
             outchannel = int(u_outchannel)
             val = torch.nn.Linear(inchannel, outchannel, bias=True)(input_node.eval())
-            self.value = val
+            self.value[index] = val
             self.markDirty(False)
             self.markInvalid(False)
             self.graphical_node.setToolTip("")
             self.evalChildren()
-            return val
+            return self.value
         except Exception as e:
             print_traceback(e)
             self.markInvalid()
@@ -191,7 +191,7 @@ class MLNode_nnConv2d(MLnode_node):
         self.content.edit_outchannel.textChanged.connect(self.onInputChanged)
         self.content.edit_kernel_size.textChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         u_inchannel = self.content.edit_inchannel.text()
         u_outchannel = self.content.edit_outchannel.text()
         u_kernel_size = self.content.edit_kernel_size.text()
@@ -217,12 +217,12 @@ class MLNode_nnConv2d(MLnode_node):
             outchannel = int(u_outchannel)
             kernel_size = int(u_kernel_size)
             val = torch.nn.Conv2d(inchannel, outchannel, kernel_size, bias=True)(input_node.eval())
-            self.value = val
+            self.value[index] = val
             self.markDirty(False)
             self.markInvalid(False)
             self.graphical_node.setToolTip("")
             self.evalChildren()
-            return val
+            return self.value
         except Exception as e:
             print_traceback(e)
             self.markInvalid()

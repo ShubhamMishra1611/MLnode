@@ -8,6 +8,7 @@ from torchvision.io import read_image
 import pandas as pd
 import glob
 import os
+from MLnode_object import MLnode_obj
 
 class MLnode_getdata_graphicsNode(MLnode_graphicNode):
     def initSizes(self):
@@ -76,7 +77,7 @@ class MLnode_getdata(MLnode_node):
         self.content = MLnode_getdata_content(self)
         self.graphical_node = MLnode_getdata_graphicsNode(self)
     
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         try:
             if self.content.file is None:
                 return None
@@ -155,7 +156,7 @@ class MLnode_getimgdata(MLnode_node):
         self.content = MLnode_getimgdata_content(self)
         self.graphical_node = MLnode_getdata_graphicsNode(self)
     
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         try:
             if self.content.file is None:
                 return None
@@ -168,6 +169,49 @@ class MLnode_getimgdata(MLnode_node):
                     self.markDirty(False)
                     self.graphical_node.setToolTip(f"Shape: {img.shape}")
                     self.value = img
+                    return self.value
+                else:
+                    self.markInvalid()
+                    self.graphical_node.setToolTip("File type not supported")
+                    return None        
+        except Exception as e:print_traceback(e)
+
+@register_node(OP_NODE_GETXYDATA)
+class MLnode_getxydata(MLnode_node):
+    icon = "icons/getdata.png"
+    op_code = OP_NODE_GETXYDATA
+    op_title = "getxydata"
+    content_label = "getxydata"
+    content_label_objname = "mlnode_node_getxydata"
+
+    def __init__(self, scene):
+        super().__init__(scene, inputs=[], outputs=[1, 1])
+
+    def initInnerClasses(self):
+        self.content = MLnode_getdata_content(self)
+        self.graphical_node = MLnode_getdata_graphicsNode(self)
+    
+
+    def evalImplementation(self, index = 0):
+        try:
+            if self.content.file is None:
+                return None
+            else:
+                self.value = MLnode_obj()
+                if self.content.file_path.endswith('csv'):
+                    data = pd.read_csv(self.content.file_path)
+                    data = data.to_numpy(dtype=np.float32)
+                    data = torch.from_numpy(data)
+                    print(f"Data shape: {data.shape}")
+                    y_col = int(self.content.y_col.text())
+                    if y_col == -1:
+                        y_col = data.shape[1]-1
+                    self.value[0] = data[:, :y_col][0]
+                    self.value[1] = data[:, y_col:][0]
+                    self.markInvalid(False)
+                    self.markDirty(False)
+                    self.graphical_node.setToolTip(f"Shape: {data.shape}")
+                    # self.value = data[0]
                     return self.value
                 else:
                     self.markInvalid()

@@ -8,7 +8,6 @@ import torch
 class MLnode_output_content(QNode_content_widget):
     def initUI(self):
         self.edit = QLabel("None", self)
-        # make it longer 
         self.edit.setMinimumWidth(180)
         self.edit.setAlignment(Qt.AlignLeft)
         self.edit.setObjectName(self.node.content_label_objname)
@@ -27,14 +26,14 @@ class MLNode_Output(MLnode_node):
         self.content = MLnode_output_content(self)
         self.graphical_node = MLnode_graphicNode(self)
 
-    def evalImplementation(self):
-        input_node = self.getInput(0)
+    def evalImplementation(self, index=0):
+        input_node, input_socket_index = self.getInput(0)
         if not input_node:
             self.graphical_node.setToolTip('Input is not connected')
             self.markInvalid()
             return
         try:
-            val = torch.tensor(input_node.eval())
+            val = torch.tensor(input_node.eval(input_socket_index))
         except Exception as e:
             self.graphical_node.setToolTip(f'Could not convert input to numpy array: {e}')
             self.markInvalid()

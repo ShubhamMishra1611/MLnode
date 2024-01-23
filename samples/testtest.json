@@ -1,0 +1,85 @@
+{
+    "id": 2564806993968,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 2564864941296,
+            "title": "getxydata",
+            "pos_x": -311.0,
+            "pos_y": -90.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2564865004480,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                },
+                {
+                    "id": 2564865004576,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_file_name": "D:/node editor ML/MLnode/deleted_files/fake_data.csv",
+                "y_col": "-1"
+            },
+            "op_code": 1302
+        },
+        {
+            "id": 2564865014848,
+            "title": "Output Tensor",
+            "pos_x": 52.0,
+            "pos_y": -85.0,
+            "inputs": [
+                {
+                    "id": 2564865014944,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2000
+        },
+        {
+            "id": 2564865014896,
+            "title": "Output Tensor",
+            "pos_x": 100.0,
+            "pos_y": 7.0,
+            "inputs": [
+                {
+                    "id": 2564865015184,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2000
+        }
+    ],
+    "edges": [
+        {
+            "id": 2564865014800,
+            "edge_type": 2,
+            "start": 2564865004576,
+            "end": 2564865015184
+        },
+        {
+            "id": 2564865015088,
+            "edge_type": 2,
+            "start": 2564865004480,
+            "end": 2564865014944
+        }
+    ]
+}

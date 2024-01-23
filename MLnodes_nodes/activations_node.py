@@ -56,7 +56,7 @@ class MLNode_activations_node(MLnode_node):
         self.graphical_node = MLNode_activations_node_graphicNode(self)
         self.content.combo.currentIndexChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         val = None
         if i1 is None:
@@ -79,11 +79,11 @@ class MLNode_activations_node(MLnode_node):
                 self.markDescendantsDirty()
                 self.graphical_node.setToolTip("Activation function not identified")
                 return None
-            self.value = val
+            self.value[index] = val
             self.markDirty(False)
             self.markInvalid(False)
             self.graphical_node.setToolTip("")
             self.markDescendantsDirty()
             self.evalChildren()
-            return val
+            return self.value
             

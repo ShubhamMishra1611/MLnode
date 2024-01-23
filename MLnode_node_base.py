@@ -7,6 +7,7 @@ from node_graphics import QgraphicsNode
 from node_socket import LEFT_CENTER, RIGHT_CENTER
 from utility import print_traceback
 import numpy as np
+from MLnode_object import MLnode_obj
 
 class MLnode_graphicNode(QgraphicsNode):
     def initSizes(self):
@@ -62,13 +63,14 @@ class MLnode_node(Node):
             outputs = [1]
 
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
-        self.value = None
+        self.value = MLnode_obj()
         self.markDirty()
 
     def evalOperation(self, input1, input2):
         return np.array([0])
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
+        raise NotImplementedError
         i1 = self.getInput(0)
         i2 = self.getInput(1)
 
@@ -90,14 +92,14 @@ class MLnode_node(Node):
 
             return val
 
-    
-    def eval(self):
+   
+    def eval(self, index=0):
         if not self.isDirty() and not self.isInvalid():
             print(f'_> returning cache {self.__class__.__name__} value as {self.value}')
-            return self.value
+            return self.value[index]
         try:
-            val = self.evalImplementation()
-            return val
+            val = self.evalImplementation(index)
+            return val[index]
         except ValueError as e:
             self.markInvalid()
             self.graphical_node.setToolTip(str(e))
@@ -128,7 +130,6 @@ class MLnode_node(Node):
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
-        # print("Deserialized CalcNode '%s'" % self.__class__.__name__, "res:", res)
         return res
     
     def getImplemClassInstance(self):

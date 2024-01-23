@@ -70,19 +70,19 @@ class MLnode_Input(MLnode_node):
         # If none of the above conditions are met, return False
         return False
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         try:
             if i1 is not None:
                 self.content.edit.setEnabled(False)
                 value = i1.eval().shape
                 if self.__is_valid_input(value):
-                    self.value = torch.ones(value)
+                    self.value[index] = torch.ones(value)
             else:
                 self.content.edit.setEnabled(True)
                 value = self.content.edit.text()
                 safe_value = ast.literal_eval(value)
-                self.value = torch.ones(safe_value)
+                self.value[index] = torch.ones(safe_value)
         except Exception as e:
             self.markInvalid(True)
             self.markDirty(True)
@@ -96,7 +96,7 @@ class MLnode_Input(MLnode_node):
         self.markDescendantsInvalid(False)
         self.markDescendantsDirty()
 
-        self.graphical_node.setToolTip(f'Input Tensor: Shape = {self.value.shape}, dtype = {self.value.dtype}')
+        self.graphical_node.setToolTip(f'Input Tensor: Shape = {self.value[index].shape}, dtype = {self.value[index].dtype}')
 
         self.evalChildren()
 
@@ -146,17 +146,17 @@ class MLnode_Input_eye(MLnode_node):
         self.graphical_node = MLnode_graphicNode(self)
         self.content.edit.textChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         unsafe_value = self.content.edit.text()
         safe_value = int(unsafe_value)
-        self.value = np.eye(safe_value)
+        self.value[index] = np.eye(safe_value)
         self.markDirty(False)
         self.markInvalid(False)
 
         self.markDescendantsInvalid(False)
         self.markDescendantsDirty()
 
-        self.graphical_node.setToolTip(f'Input Eye Tensor: Shape = {self.value.shape}, dtype = {self.value.dtype}')
+        self.graphical_node.setToolTip(f'Input Eye Tensor: Shape = {self.value[index].shape}, dtype = {self.value[index].dtype}')
 
         self.evalChildren()
 
@@ -233,7 +233,7 @@ class MLnode_Input_arange(MLnode_node):
         self.content.edit_end.textChanged.connect(self.onInputChanged)
         self.content.edit_step.textChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         unsafe_start_value = self.content.edit_start.text()
         unsafe_end_value = self.content.edit_end.text()
         unsafe_step_value = self.content.edit_step.text()
@@ -241,14 +241,14 @@ class MLnode_Input_arange(MLnode_node):
         safe_end_value = float(unsafe_end_value) if unsafe_end_value else 10.0
         safe_step_value = float(unsafe_step_value) if unsafe_step_value else 1.0
         try:
-            self.value = torch.arange(safe_start_value, safe_end_value, safe_step_value)
+            self.value[index] = torch.arange(safe_start_value, safe_end_value, safe_step_value)
             self.markDirty(False)
             self.markInvalid(False)
 
             self.markDescendantsInvalid(False)
             self.markDescendantsDirty()
 
-            self.graphical_node.setToolTip(f'Input Arange Tensor: Shape = {self.value.shape}, dtype = {self.value.dtype}')
+            self.graphical_node.setToolTip(f'Input Arange Tensor: Shape = {self.value[index].shape}, dtype = {self.value[index].dtype}')
             self.evalChildren()
             return self.value
         except Exception as e:

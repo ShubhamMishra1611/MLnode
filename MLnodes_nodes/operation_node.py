@@ -86,7 +86,7 @@ class MLNode_Transpose(MLnode_node):
         self.content.edit_dim1.textChanged.connect(self.onInputChanged)
 
     
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -99,13 +99,13 @@ class MLNode_Transpose(MLnode_node):
             s_dim0 = int(u_dim0)
             s_dim1 = int(u_dim1)
             val = torch.transpose(i1.eval(), s_dim0, s_dim1)
-            self.value = val
+            self.value[index] = val
             self.markDirty(False)
             self.markInvalid(False)
             self.graphical_node.setToolTip("")
             self.markDescendantsDirty()
             self.evalChildren()
-            return val
+            return self.value
 
 
 class MLnode_scalar_graphicsNode(MLnode_graphicNode):
@@ -156,7 +156,7 @@ class MLNode_Scalar(MLnode_node):
         self.graphical_node = MLnode_scalar_graphicsNode(self)
         self.content.edit.textChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -169,15 +169,15 @@ class MLNode_Scalar(MLnode_node):
                 value_ = self.content.edit.text()
                 safe_value_ = float(value_)
                 val = i1.eval() * safe_value_
-                self.value = val
+                self.value[index] = val
                 self.markDirty(False)
                 self.markInvalid(False)
-                self.graphical_node.setToolTip(f"{self.value}: {self.get_device_type()}")
+                self.graphical_node.setToolTip(f"{self.value[index]}: {self.get_device_type()}")
 
                 self.markDescendantsDirty()
                 self.evalChildren()
 
-                return val
+                return self.value
             except Exception as e:
                 self.markInvalid()
                 self.markDescendantsDirty()
@@ -233,7 +233,7 @@ class MLnode_reshape(MLnode_node):
         self.graphical_node = MLnode_reshape_graphicsNode(self)
         self.content.edit.textChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -246,15 +246,15 @@ class MLnode_reshape(MLnode_node):
                 shape_ = self.content.edit.text()
                 safe_shape_ = ast.literal_eval(shape_)
                 val = i1.eval().reshape(safe_shape_)
-                self.value = val
+                self.value[index] = val
                 self.markDirty(False)
                 self.markInvalid(False)
-                self.graphical_node.setToolTip(f"{self.value}: {self.get_device_type()}")
+                self.graphical_node.setToolTip(f"{self.value[index]}: {self.get_device_type()}")
 
                 self.markDescendantsDirty()
                 self.evalChildren()
 
-                return val
+                return self.value
             except Exception as e:
                 self.markInvalid()
                 self.markDescendantsDirty()
@@ -317,7 +317,7 @@ class MLnode_flatten(MLnode_node):
         self.content.edit_dim1.textChanged.connect(self.onInputChanged)
 
     
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -331,13 +331,13 @@ class MLnode_flatten(MLnode_node):
                 s_dim0 = int(u_dim0)
                 s_dim1 = int(u_dim1)
                 val = torch.flatten(i1.eval(), s_dim0, s_dim1)
-                self.value = val
+                self.value[index] = val
                 self.markDirty(False)
                 self.markInvalid(False)
                 self.graphical_node.setToolTip("")
                 self.markDescendantsDirty()
                 self.evalChildren()
-                return val
+                return self.value
             except Exception as e:
                 self.markInvalid()
                 self.markDescendantsDirty()
@@ -383,7 +383,7 @@ class MLnode_normalization(MLnode_node):
         self.graphical_node = MLnode_normalization_graphicsNode(self)
 
     
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -397,13 +397,13 @@ class MLnode_normalization(MLnode_node):
                 if len(this_tensor.shape) == 1:
                     this_tensor = this_tensor.unsqueeze(0)
                 val = torch.nn.functional.normalize(this_tensor)
-                self.value = val
+                self.value[index] = val
                 self.markDirty(False)
                 self.markInvalid(False)
                 self.graphical_node.setToolTip("")
                 self.markDescendantsDirty()
                 self.evalChildren()
-                return val
+                return self.value
             except Exception as e:
                 self.markInvalid()
                 self.markDescendantsDirty()
@@ -467,7 +467,7 @@ class MLnode_clipping(MLnode_node):
         self.content.edit_max.textChanged.connect(self.onInputChanged)
 
     
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -481,13 +481,13 @@ class MLnode_clipping(MLnode_node):
                 s_min = float(u_min)
                 s_max = float(u_max)
                 val = torch.clamp(i1.eval(), s_min, s_max)
-                self.value = val
+                self.value[index] = val
                 self.markDirty(False)
                 self.markInvalid(False)
                 self.graphical_node.setToolTip("")
                 self.markDescendantsDirty()
                 self.evalChildren()
-                return val
+                return self.value
             except Exception as e:
                 self.markInvalid()
                 self.markDescendantsDirty()
@@ -546,7 +546,7 @@ class MLnode_changedtype(MLnode_node):
         self.content.combo_type.currentTextChanged.connect(self.onInputChanged)
 
     
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -565,13 +565,13 @@ class MLnode_changedtype(MLnode_node):
                     "bool": torch.bool
                 }
                 val = i1.eval().type(dtype_map[u_type])
-                self.value = val
+                self.value[index] = val
                 self.markDirty(False)
                 self.markInvalid(False)
                 self.graphical_node.setToolTip("")
                 self.markDescendantsDirty()
                 self.evalChildren()
-                return val
+                return self.value
             except Exception as e:
                 self.markInvalid()
                 self.markDescendantsDirty()

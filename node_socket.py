@@ -26,13 +26,11 @@ class Socket(Serializable):
 
         
         self.graphics_socket = Qgraphics_socket(self, self.socket_type)
-        # self.graphics_socket.setPos(*self.node.get_socket_position(index, position))
         self.setSocketPosition()
 
         self.edges = []
 
     def get_socket_position(self):
-        # return self.node.get_socket_position(self.index, self.position)
         res = self.node.get_socket_position(self.index, self.position, self.count_on_this_node_side)
         return res
     
@@ -44,8 +42,6 @@ class Socket(Serializable):
     def add_edge(self, edge):
         self.edges.append(edge)
 
-    # def has_edge(self):
-    #     return self.edge is not None
     def remove_edge(self, edge):
         if edge in self.edges: self.edges.remove(edge)
         else: print("!W:", "Socket::removeEdge", "wanna remove edge", edge, "from self.edges but it's not in the list!")
@@ -58,7 +54,6 @@ class Socket(Serializable):
     
     def __str__(self) -> str:
         return "<Socket %s %s..%s>" % ("ME" if self.is_multi_edges else "SE", hex(id(self))[2:5], hex(id(self))[-3:])
-        return "<Socket %s>" % (hex(id(self)))
     
     
     def serialize(self):

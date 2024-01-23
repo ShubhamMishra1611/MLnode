@@ -86,7 +86,7 @@ class MLnode_trainnode(MLnode_node):
         self.content.lr_edit.textChanged.connect(self.onInputChanged)
         self.content.loss_combo.currentIndexChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         u_epoch = self.content.epoch_edit.text()
         u_optim = self.content.optim_combo.currentText()
         u_lr = self.content.lr_edit.text()

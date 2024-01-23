@@ -56,7 +56,7 @@ class MLNode_tensor_info_node(MLnode_node):
         self.graphical_node = MLNode_tensor_info_node_graphicNode(self)
         self.content.combo.currentIndexChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -84,7 +84,7 @@ class MLNode_tensor_info_node(MLnode_node):
                 self.graphical_node.setToolTip("Unknown tensor info")
                 return None
             
-            self.value = val
+            self.value[index] = val
             self.markDirty(False)
             self.markInvalid(False)
             self.markDescendantsDirty()

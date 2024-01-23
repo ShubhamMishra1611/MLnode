@@ -15,6 +15,7 @@ class GraphNode:
         self.inputs = node_dict['inputs']
         self.outputs = node_dict['outputs']
         self.content = node_dict['content']
+        self.opcode = node_dict['op_code']
 
 
 class GraphEdge:
@@ -36,10 +37,14 @@ class Graph:
     
     def getParentNode(self, node_id):
         p_id = None
-        for edge in self.edges:
-            if edge.end == self.nodes[node_id].inputs[0]['id']:
-                return edge.start
-        return None
+        try:
+            for edge in self.edges:
+                if edge.end == self.nodes[node_id].inputs[0]['id']:
+                    return edge.start
+            return None
+        except IndexError as e:
+            print_traceback(e)
+            return None
 
 class Model(nn.Module):
     def __init__(self, graph):
@@ -65,16 +70,22 @@ class Model(nn.Module):
         # get the node that has not input node and is not getdata node
         current_id = None
         for node_id, node in self.graph.nodes.items():
-            if node.title == 'getdata':
+            if node.opcode % 100 == 13:
+                if DEBUG: print(f'node.title = {node.title}')
+            # if node.title == 'getdata':
                 continue
             if DEBUG: print(f'{node_id = }')
             parent_node = self.graph.getParentNode(node_id)
             if DEBUG: print(f'{parent_node = }')
             parentnodeid = self.find_node(self.graph.getParentNode(node_id), inputoroutput="output")
             if DEBUG: print(f'{parentnodeid = }')
+            if parentnodeid is None: continue
             parent_node_title = self.graph.nodes[parentnodeid].title
+            parent_node_opcode = self.graph.nodes[parentnodeid].opcode
             if DEBUG: print(f'{parent_node_title = }')
-            if parent_node_title == 'getdata':
+            if DEBUG: print(f'{parent_node_opcode = }')
+            if parent_node_opcode // 100 == 13:
+            # if parent_node_title == 'getdata':
                 current_id = node_id
                 break
         if DEBUG: print(f'{current_id = }')
@@ -152,8 +163,8 @@ if __name__ == '__main__':
             dataset = CustomDataset(node.content['value_file_name'])
             dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
-    for (x, y) in enumerate(dataloader):
-        print(x, y)
+    # for (x, y) in enumerate(dataloader):
+    #     print(x, y)
     print(f'{model = }')
     dataset = CustomDataset('deleted_files/fake_data.csv')
     dataloader = DataLoader(dataset, batch_size=3, shuffle=True)

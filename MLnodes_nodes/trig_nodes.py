@@ -58,7 +58,7 @@ class MLNode_Trig(MLnode_node):
         self.graphical_node = MLNode_trignode_graphicNode(self)
         self.content.combo.currentIndexChanged.connect(self.onInputChanged)
 
-    def evalImplementation(self):
+    def evalImplementation(self, index = 0):
         i1 = self.getInput(0)
         if i1 is None:
             self.markInvalid()
@@ -84,10 +84,10 @@ class MLNode_Trig(MLnode_node):
                 self.markDescendantsDirty()
                 self.graphical_node.setToolTip("Invalid trig function")
                 return None
-            self.value = val
+            self.value[index] = val
             self.markDirty(False)
             self.markInvalid(False)
             self.graphical_node.setToolTip("")
             self.markDescendantsDirty()
             self.evalChildren()
-            return val
+            return self.value

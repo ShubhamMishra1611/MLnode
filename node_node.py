@@ -98,7 +98,8 @@ class Node(Serializable):
         try:
             edge = self.inputs[index].edges[0]
             socket = edge.getOtherSocket(self.inputs[index])
-            return socket.node
+            print(f"{socket.index = }")
+            return socket.node, socket.index
         except IndexError as e:
             print(f'getInput({index}) failed:', e)
             return None

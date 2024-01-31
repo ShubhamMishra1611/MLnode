@@ -16,6 +16,10 @@ class MLNode_Add(MLnode_node):
 
     def evalOperation(self, input1, input2):
         return input1 + input2
+    
+    @staticmethod
+    def evalMethod(input1, input2):
+        return torch.add(input1, input2)
 
 @register_node(OP_NODE_MATMUL)
 class MLNode_Matmul(MLnode_node):

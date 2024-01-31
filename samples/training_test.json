@@ -6,8 +6,8 @@
         {
             "id": 2638910505312,
             "title": "nn.Linear",
-            "pos_x": -211.0,
-            "pos_y": -100.0,
+            "pos_x": -342.0,
+            "pos_y": -107.0,
             "inputs": [
                 {
                     "id": 2638910517024,
@@ -27,16 +27,22 @@
                 }
             ],
             "content": {
-                "value_inchannel": "3",
-                "value_outchannel": "2"
+                "in_features": [
+                    "10",
+                    "int"
+                ],
+                "out_features": [
+                    "8",
+                    "int"
+                ]
             },
-            "op_code": 11
+            "op_code": 1200
         },
         {
             "id": 2638910519328,
             "title": "nn.Linear",
-            "pos_x": -47.0,
-            "pos_y": -123.0,
+            "pos_x": -178.0,
+            "pos_y": -130.0,
             "inputs": [
                 {
                     "id": 2638910519424,
@@ -56,16 +62,22 @@
                 }
             ],
             "content": {
-                "value_inchannel": "2",
-                "value_outchannel": "2"
+                "in_features": [
+                    "8",
+                    "int"
+                ],
+                "out_features": [
+                    "4",
+                    "int"
+                ]
             },
-            "op_code": 11
+            "op_code": 1200
         },
         {
             "id": 2638910519376,
             "title": "nn.Linear",
-            "pos_x": 214.0,
-            "pos_y": -122.0,
+            "pos_x": 83.0,
+            "pos_y": -129.0,
             "inputs": [
                 {
                     "id": 2638910519664,
@@ -85,16 +97,22 @@
                 }
             ],
             "content": {
-                "value_inchannel": "2",
-                "value_outchannel": "1"
+                "in_features": [
+                    "4",
+                    "int"
+                ],
+                "out_features": [
+                    "1",
+                    "int"
+                ]
             },
-            "op_code": 11
+            "op_code": 1200
         },
         {
             "id": 2638910520336,
             "title": "getdata",
-            "pos_x": -436.0,
-            "pos_y": -33.0,
+            "pos_x": -567.0,
+            "pos_y": -40.0,
             "inputs": [],
             "outputs": [
                 {
@@ -106,15 +124,16 @@
                 }
             ],
             "content": {
-                "value_file_name": "D:/node editor ML/MLnode/deleted_files/fake_data.csv"
+                "value_file_name": "deleted_files/fake_data.csv",
+                "y_col": "-1"
             },
-            "op_code": 13
+            "op_code": 1300
         },
         {
             "id": 2638910520384,
             "title": "Training",
-            "pos_x": 116.0,
-            "pos_y": 39.0,
+            "pos_x": 81.0,
+            "pos_y": 287.0,
             "inputs": [],
             "outputs": [],
             "content": {
@@ -123,7 +142,163 @@
                 "value_lr": "0.001",
                 "value_loss": 0
             },
-            "op_code": 14
+            "op_code": 1400
+        },
+        {
+            "id": 1693445195232,
+            "title": "Output Tensor",
+            "pos_x": 749.0,
+            "pos_y": -151.0,
+            "inputs": [
+                {
+                    "id": 1693445195328,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2000
+        },
+        {
+            "id": 2277649811968,
+            "title": "nn.Linear",
+            "pos_x": 36.0,
+            "pos_y": 43.0,
+            "inputs": [
+                {
+                    "id": 2277649812064,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2277649812160,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "in_features": [
+                    "4",
+                    "int"
+                ],
+                "out_features": [
+                    "2",
+                    "int"
+                ]
+            },
+            "op_code": 1200
+        },
+        {
+            "id": 2277649812304,
+            "title": "nn.Linear",
+            "pos_x": 243.0,
+            "pos_y": 35.0,
+            "inputs": [
+                {
+                    "id": 2277649812400,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2277649812496,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "in_features": [
+                    "2",
+                    "int"
+                ],
+                "out_features": [
+                    "1",
+                    "int"
+                ]
+            },
+            "op_code": 1200
+        },
+        {
+            "id": 2277649812880,
+            "title": "Matrix Addition",
+            "pos_x": 329.0,
+            "pos_y": -126.0,
+            "inputs": [
+                {
+                    "id": 2277649812784,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 2
+                },
+                {
+                    "id": 2277649812976,
+                    "index": 1,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2277649813072,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {},
+            "op_code": 3000
+        },
+        {
+            "id": 1971837521968,
+            "title": "nn.Linear",
+            "pos_x": 545.0,
+            "pos_y": -127.0,
+            "inputs": [
+                {
+                    "id": 1971837522064,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1971837522160,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "in_features": [
+                    "1",
+                    "int"
+                ],
+                "out_features": [
+                    "1",
+                    "int"
+                ]
+            },
+            "op_code": 1200
         }
     ],
     "edges": [
@@ -144,6 +319,42 @@
             "edge_type": 2,
             "start": 2638910520480,
             "end": 2638910517024
+        },
+        {
+            "id": 2277649811920,
+            "edge_type": 2,
+            "start": 2638910519520,
+            "end": 2277649812064
+        },
+        {
+            "id": 2277649812736,
+            "edge_type": 2,
+            "start": 2277649812160,
+            "end": 2277649812400
+        },
+        {
+            "id": 2277649812640,
+            "edge_type": 2,
+            "start": 2277649812496,
+            "end": 2277649812976
+        },
+        {
+            "id": 2277649813216,
+            "edge_type": 2,
+            "start": 2638910519760,
+            "end": 2277649812784
+        },
+        {
+            "id": 1971837521920,
+            "edge_type": 2,
+            "start": 2277649813072,
+            "end": 1971837522064
+        },
+        {
+            "id": 1971837403920,
+            "edge_type": 2,
+            "start": 1971837522160,
+            "end": 1693445195328
         }
     ]
 }

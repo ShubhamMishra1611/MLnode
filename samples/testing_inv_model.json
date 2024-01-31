@@ -1,0 +1,95 @@
+{
+    "id": 2494161453936,
+    "scene_width": 16000,
+    "scene_height": 16000,
+    "nodes": [
+        {
+            "id": 2494161631216,
+            "title": "getdata",
+            "pos_x": -450.0,
+            "pos_y": -169.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2494161696320,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "value_file_name": "deleted_files/fake_data.csv",
+                "y_col": "-1"
+            },
+            "op_code": 1300
+        },
+        {
+            "id": 2494161698624,
+            "title": "nn.Linear",
+            "pos_x": -170.0,
+            "pos_y": -139.0,
+            "inputs": [
+                {
+                    "id": 2494161698768,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2494161750432,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "in_features": [
+                    "10",
+                    "int"
+                ],
+                "out_features": [
+                    "10",
+                    "int"
+                ]
+            },
+            "op_code": 1200
+        },
+        {
+            "id": 2494161761472,
+            "title": "Output Tensor",
+            "pos_x": 124.0,
+            "pos_y": -164.0,
+            "inputs": [
+                {
+                    "id": 2494161761328,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [],
+            "content": {},
+            "op_code": 2000
+        }
+    ],
+    "edges": [
+        {
+            "id": 2494161751200,
+            "edge_type": 2,
+            "start": 2494161696320,
+            "end": 2494161698768
+        },
+        {
+            "id": 2494161759072,
+            "edge_type": 2,
+            "start": 2494161750432,
+            "end": 2494161761328
+        }
+    ]
+}

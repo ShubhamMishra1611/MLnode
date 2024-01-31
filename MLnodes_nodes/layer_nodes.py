@@ -33,15 +33,15 @@ class MLNode_nnLinear_content(QNode_content_widget):
 
     def serialize(self):
         res = super().serialize()
-        res['value_inchannel'] = self.edit_inchannel.text()
-        res['value_outchannel'] = self.edit_outchannel.text()
+        res['in_features'] = [self.edit_inchannel.text(), 'int']
+        res['out_features'] = [self.edit_outchannel.text(), 'int']
         return res
     
     def deserialize(self, data, hashmap={}):
         res = super().deserialize(data, hashmap)
         try:
-            value_inchannel = data['value_inchannel']
-            value_outchannel = data['value_outchannel']
+            value_inchannel, _ = data['in_features']
+            value_outchannel, _ = data['out_features']
             self.edit_inchannel.setText(value_inchannel)
             self.edit_outchannel.setText(value_outchannel)
             return True & res

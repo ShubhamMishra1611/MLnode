@@ -68,6 +68,9 @@ class MLnode_node(Node):
 
     def evalOperation(self, input1, input2):
         return np.array([0])
+    
+    def evalMethod(self, input1, input2):
+        return np.array([0])
 
     def evalImplementation(self, index = 0):
         raise NotImplementedError

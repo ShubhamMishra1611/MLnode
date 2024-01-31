@@ -2,6 +2,7 @@ import os
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+import yaml
 
 from node_editor_window import node_editor_window
 from MLnode_sub_window import mlnode_sub_window
@@ -60,7 +61,9 @@ class MLnodeWindow(node_editor_window):
 
         self.actTile = QAction("&Tile", self, statusTip="Tile the windows",triggered=self.mdiArea.tileSubWindows)
 
-        self.actModelRegister = QAction("&Register", self, statusTip="Register the model",triggered=self.on_model_register)
+        self.actModelRegister = QAction("&Model Register", self, statusTip="Register the model",triggered=self.on_model_register)
+
+        self.actDataRegister = QAction("&Data Register", self, statusTip="Register the data",triggered=self.on_data_register)
 
         self.actCascade = QAction("&Cascade", self,statusTip="Cascade the windows",triggered=self.mdiArea.cascadeSubWindows)
 
@@ -164,6 +167,24 @@ class MLnodeWindow(node_editor_window):
     def createToolBars(self):
         pass
 
+    def on_data_register(self):
+        # temporary save the graph in temp folder
+        # read the same graph and create the model
+
+        current_nodeeditor = self.get_current_node_editor_widget()
+        if current_nodeeditor is not None:
+            current_nodeeditor.fileSave('temp/temp.json')
+
+        # convert JSON to YAML
+        with open('temp/temp.json', 'r') as f:
+            graph = json.load(f)
+
+        yaml_data = yaml.dump(graph)
+
+        # save the YAML data to a file
+        with open('temp/temp.yaml', 'w') as f:
+            f.write(yaml_data)
+    
     def on_model_register(self):
         # temporary save the graph in temp folder
         # read the same graph and create the model
@@ -177,7 +198,7 @@ class MLnodeWindow(node_editor_window):
         grph = Graph(graph)
         model = Model(grph)
 
-        print(model)
+        # print(model)
         
         # for dataset
         dataloader = None
@@ -234,6 +255,7 @@ class MLnodeWindow(node_editor_window):
         self.windowMenu.addAction(self.actTile)
         self.windowMenu.addAction(self.actCascade)
         self.windowMenu.addAction(self.actModelRegister)
+        self.windowMenu.addAction(self.actDataRegister)
         self.windowMenu.addSeparator()
         self.windowMenu.addAction(self.actNext)
         self.windowMenu.addAction(self.actPrevious)

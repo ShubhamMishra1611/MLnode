@@ -1,94 +1,29 @@
-import json
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
+import torch.optim as optim
 from MLnode_conf import *
-import logging
-from obj_mapping import obj_map
-import os
-import pandas as pd
-from utility import print_traceback 
 import sys
-
-DEBUG = False
-
+import logging
+import time
 logging.basicConfig(level=logging.WARNING, format=':%(message)s')
 
 logger = logging.getLogger(__name__)
 
-class GraphNode:
-    def __init__(self, node_dict):
-        self.id = node_dict['id']
-        self.title = node_dict['title']
-        self.inputs = node_dict['inputs']
-        self.outputs = node_dict['outputs']
-        self.content = node_dict['content']
-        self.opcode = node_dict['op_code']
-        
-        self.value = None
-        self.evaluated = False
+obj_map = {
+    1200: nn.Linear,
+    1201: nn.Conv2d,
+    1500: nn.ReLU,
+}
 
 
-class GraphEdge:
-    def __init__(self, edge_dict):
-        self.start = edge_dict['start']
-        self.end = edge_dict['end']
+################## Rough ##################
+# from model_registeration import Graph, GraphEdge, GraphNode
 
-class Graph:
-    def __init__(self, structure):
-        self.nodes = {}
-        self.start_node = None
-        self.end_node = None
-
-        ignore_nodes = [
-            'tensor_info'
-        ]
-
-        for node in structure['nodes']:
-            if node['title'] == 'getdata':
-                self.start_node = node['id']
-            if node['title'] == 'Output Tensor':
-                self.end_node = node['id']
-            if node['outputs']:
-                if node['title'] not in ignore_nodes:
-                    self.nodes[node['id']] = GraphNode(node)
-
-        # for node in structure['nodes']:
-        #     # Only consider nodes with non-empty 'outputs' list
-        #     if node['outputs']: # TODO: this should not be output but should be input or id of node itself
-        #         self.nodes[node['id']] = GraphNode(node) 
-        self.edges = [GraphEdge(edge) for edge in structure['edges']]
-
-    def __str__(self):
-        return f'{self.nodes = }\n{self.edges = }'
-    
-    def getParentNode(self, node_id):
-        p_id = None
-        try:
-            for edge in self.edges:
-                if edge.end == self.nodes[node_id].inputs[0]['id']:
-                    return edge.start
-            return None
-        except IndexError as e:
-            print_traceback(e)
-            return None
-    
-    def getParentNodes(self, node_id):
-        input_ids = [x['id'] for x in self.nodes[node_id].inputs]
-        parents = []
-        for edge in self.edges:
-            if edge.end in input_ids:
-                parents.append(edge.start)
-            # if edge.end == self.nodes[node_id].inputs[0]['id']:
-            #     parents.append(edge.start)
-        return parents
-        
-    def getChildrenNodes(self, node_id):
-        children = []
-        for edge in self.edges:
-            if edge.start == self.nodes[node_id].outputs[0]['id']:
-                children.append(edge.end)
-        return children
+# def conv_to_type(value, type_):
+#     try:
+#         return eval(f'{type_}({value})')
+#     except (ValueError, TypeError) as e:
+#         raise TypeError(f'Error converting to {type_}: {e}')
 
 def conv_to_type(value, type_):
     type_mapping = {
@@ -213,73 +148,76 @@ class Model(nn.Module):
         self.graph.nodes[node].value = value
         self.graph.nodes[node].evaluated = True
         return value
-
-
-class CustomDataset(Dataset):
-    def __init__(self, file_path):
-        self.file_path = file_path
-        self.data = self.load_data()
-        self.file_type = self.file_path.split('.')[-1]
-
-    def load_data(self):
-        if self.file_path.endswith('csv'):
-            return pd.read_csv(self.file_path)
-        else:
-            return None
-        
-    def __len__(self):
-        return len(self.data)
     
-    def __getitem__(self, idx):
-        if self.file_type == 'csv':
-            series = self.data.iloc[idx]
-            x = torch.from_numpy(series.values[:len(series)//2].astype('float32'))
-            y = torch.from_numpy(series.values[len(series)//2:].astype('float32'))
-            # y = torch.from_numpy(series.values[-1:].astype('float32'))
-            return x, y
-        elif self.file_type == 'json':
-            return torch.from_numpy(self.data[idx].astype('float32'))
-        else:
-            return None
+# from torch.utils.data import Dataset, DataLoader
 
-class training_module:
-    def __init__(self, model, dataset, optimizer, loss_fn):
-        self.model = model
-        self.dataset = dataset
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-        self.loss_fn = nn.MSELoss()
+# class seqof_dataset(Dataset):
+#   def __init__(self, num_samples = 1000, seq_len = 10):
+#     self.num_samples = num_samples
+#     self.seq_len = seq_len
+#     self.data = torch.randint(1, 10, (num_samples,  seq_len))
+#     self.dum = 2 * self.data + 1
+#     self.targets = torch.flip(self.dum, [1])
 
-    def train(self, epochs):
-        for epoch in range(epochs):
-            for i, (x, y) in enumerate(self.dataset):
-                y_pred = self.model(x)
-                loss = self.loss_fn(y_pred, y)
-                self.optimizer.zero_grad()
-                loss.backward()
-                self.optimizer.step()
-            print(f'Epoch {epoch + 1} | Batch: {i+1} | Loss: {loss.item():.4f}')
+#   def __len__(self):
+#     return self.num_samples
 
-        # save the model to disk
-        torch.save(self.model.state_dict(), 'model.pth')
-        print(f'Final loss: {loss.item():.4f}')
-        print(f'Training complete. Model saved to: model.pth')
+#   def __getitem__(self, idx):
+#     return self.data[idx], self.targets[idx]
+
+
+# test_data =  seqof_dataset(10, 10)
+# dataloader = DataLoader(test_data, batch_size=1, shuffle=True)
+
+# for _, (x, y) in enumerate(dataloader):
+#   print(f'{x = }')
+#   print(f'{y = }')
 
 if __name__ == '__main__':
-    # Load the JSON data
-    with open(r'samples\testing_inv_model.json', 'r') as f:
+    import json
+    with open(r'samples\some_model.json', 'r') as f:
         structure = json.load(f)
 
     # Create the graph and the model
     graph = Graph(structure)
     model = Model(graph)
-    dataset = None
-    for node_id, node in graph.nodes.items():
-        if node.title == 'getdata':
-            dataset = CustomDataset(node.content['value_file_name'])
-            dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    loss_fn = nn.MSELoss()
-    trainer = training_module(model, dataloader, optimizer, loss_fn)
-    trainer.train(epochs=10)
+    # look if all var have req_grad as True
+    # for param in model.parameters():
+    #     print(param.requires_grad) 
 
+    logger.info(f'{graph = }')
+    logger.info(f'{model = }')
+
+    random_tensor = torch.randn(10)
+    output = model(random_tensor)
+    logger.info(f'{output = }')
+
+    print("*"*100)
+        
+    num_epochs = 4000
+    learning_rate = 0.0001
+
+    # Create the dataset and dataloader
+    dataset = seqof_dataset(10, 10)
+    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+    # training loop
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    for epoch in range(num_epochs):
+        for i, (seq, tar) in enumerate(dataloader):
+            outputs = model(seq.float())
+            loss = criterion(outputs, tar.float())
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            print(f'Epoch {epoch}/{num_epochs}, Loss: {loss.item()}')
+            
+    # get the output of the model
+    for seq, tar in dataloader:
+        outputs = model(seq.float())
+        print(f'{seq = }')
+        print(f'{tar = }')
+        print(f'{outputs = }')
+        break
